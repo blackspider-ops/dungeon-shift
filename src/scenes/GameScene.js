@@ -566,17 +566,33 @@ export default class GameScene extends Phaser.Scene {
     this.pauseMenu.add(restartButton);
 
     // Main menu button
-    const menuButton = this.createMenuButton(menuX, buttonY + buttonSpacing * 2, 'Main Menu', () => {
+    const menuButton = this.createMenuButton(menuX, buttonY + buttonSpacing * 2, 'Main Menu [Q]', () => {
       this.hidePauseMenu();
       this.scene.stop();
       this.scene.start('MenuScene');
     });
     this.pauseMenu.add(menuButton);
 
-    // Set up keyboard shortcuts
+    // Set up keyboard shortcuts (Q for quit to menu, R for restart)
     this.pauseMenuKeys = {
-      r: this.input.keyboard.addKey('R')
+      r: this.input.keyboard.addKey('R'),
+      q: this.input.keyboard.addKey('Q')
     };
+
+    this.pauseMenuKeys.r.on('down', () => {
+      if (this.isPaused) {
+        this.hidePauseMenu();
+        this.restartLevel();
+      }
+    });
+
+    this.pauseMenuKeys.q.on('down', () => {
+      if (this.isPaused) {
+        this.hidePauseMenu();
+        this.scene.stop();
+        this.scene.start('MenuScene');
+      }
+    });
 
     this.pauseMenuKeys.r.on('down', () => {
       if (this.isPaused) {
@@ -606,6 +622,7 @@ export default class GameScene extends Phaser.Scene {
     // Clean up keyboard shortcuts
     if (this.pauseMenuKeys) {
       this.pauseMenuKeys.r.destroy();
+      this.pauseMenuKeys.q.destroy();
       this.pauseMenuKeys = null;
     }
 
@@ -1567,6 +1584,15 @@ export default class GameScene extends Phaser.Scene {
       this.player.sprite.setVisible(false);
     }
 
+    // Hide all enemy sprites during game over screen
+    if (this.gameState && this.gameState.enemies) {
+      for (const enemy of this.gameState.enemies) {
+        if (enemy.sprite) {
+          enemy.sprite.setVisible(false);
+        }
+      }
+    }
+
     // Disable input
     if (this.inputManager) {
       this.inputManager.disable();
@@ -2414,10 +2440,10 @@ export default class GameScene extends Phaser.Scene {
       this.inputManager = null;
     }
     
-    // Remove specific keyboard listeners to prevent conflicts
+    // Remove ALL keyboard listeners including once() listeners
     if (this.input && this.input.keyboard) {
-      this.input.keyboard.off('keydown-ESC');
-      this.input.keyboard.off('keydown-M');
+      // Remove all keys to clear once() listeners
+      this.input.keyboard.removeAllKeys(true);
     }
     
     if (this.tileRenderer) {
