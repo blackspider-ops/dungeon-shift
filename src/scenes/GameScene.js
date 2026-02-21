@@ -482,7 +482,8 @@ export default class GameScene extends Phaser.Scene {
     if (this.isPaused) return;
 
     this.isPaused = true;
-    this.scene.pause();
+    // Don't pause the scene - just set the flag to stop game logic
+    // this.scene.pause(); // REMOVED - this prevents UI from being created
 
     const width = this.cameras.main.width;
     const height = this.cameras.main.height;
@@ -594,7 +595,8 @@ export default class GameScene extends Phaser.Scene {
     if (!this.isPaused) return;
 
     this.isPaused = false;
-    this.scene.resume();
+    // Don't resume the scene - we never paused it
+    // this.scene.resume(); // REMOVED
 
     if (this.pauseMenu) {
       this.pauseMenu.destroy();
@@ -1560,6 +1562,11 @@ export default class GameScene extends Phaser.Scene {
     
     console.log('GameScene: isGameOver flag set to true');
 
+    // Hide player sprite during game over screen
+    if (this.player && this.player.sprite) {
+      this.player.sprite.setVisible(false);
+    }
+
     // Disable input
     if (this.inputManager) {
       this.inputManager.disable();
@@ -2407,9 +2414,10 @@ export default class GameScene extends Phaser.Scene {
       this.inputManager = null;
     }
     
-    // Remove all keyboard listeners to prevent conflicts
+    // Remove specific keyboard listeners to prevent conflicts
     if (this.input && this.input.keyboard) {
-      this.input.keyboard.removeAllListeners();
+      this.input.keyboard.off('keydown-ESC');
+      this.input.keyboard.off('keydown-M');
     }
     
     if (this.tileRenderer) {
