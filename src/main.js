@@ -2,6 +2,24 @@ import BootScene from './scenes/BootScene.js';
 import MenuScene from './scenes/MenuScene.js';
 import GameScene from './scenes/GameScene.js';
 
+// Initialize dev mode flag (default: false)
+window.DUNGEON_SHIFT_DEV_MODE = false;
+
+// Global dev mode toggle function
+window.turn_on_dev_mode = function() {
+    window.DUNGEON_SHIFT_DEV_MODE = true;
+    console.log('%c🔓 DEV MODE ENABLED', 'color: #00ff00; font-size: 16px; font-weight: bold;');
+    console.log('%cAll levels unlocked! Restart the menu to see changes.', 'color: #00ff00;');
+    return 'Dev mode enabled! All levels unlocked.';
+};
+
+window.turn_off_dev_mode = function() {
+    window.DUNGEON_SHIFT_DEV_MODE = false;
+    console.log('%c🔒 DEV MODE DISABLED', 'color: #ff0000; font-size: 16px; font-weight: bold;');
+    console.log('%cLevel progression restored. Restart the menu to see changes.', 'color: #ff0000;');
+    return 'Dev mode disabled! Normal progression restored.';
+};
+
 // Global error handler to prevent page crashes
 window.addEventListener('error', (event) => {
     console.error('GLOBAL ERROR:', event.error);

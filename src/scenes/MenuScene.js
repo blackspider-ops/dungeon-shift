@@ -366,10 +366,9 @@ export default class MenuScene extends Phaser.Scene {
    * @returns {number} Maximum unlocked level (1-10)
    */
   getMaxUnlockedLevel() {
-    // DEV MODE: Unlock all levels for testing
-    const DEV_MODE = true;
-    if (DEV_MODE) {
-      return 10; // All levels unlocked
+    // Check global dev mode flag
+    if (window.DUNGEON_SHIFT_DEV_MODE === true) {
+      return 10; // All levels unlocked in dev mode
     }
     
     try {
@@ -381,6 +380,6 @@ export default class MenuScene extends Phaser.Scene {
     } catch (e) {
       console.error('MenuScene: Error loading progress', e);
     }
-    return 1; // Default to level 1 unlocked
+    return 1; // Default to level 1 unlocked (tutorial + level 1)
   }
 }
