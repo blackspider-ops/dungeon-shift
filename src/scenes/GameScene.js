@@ -1471,7 +1471,7 @@ export default class GameScene extends Phaser.Scene {
 
     // Create pause menu container
     this.pauseMenu = this.add.container(0, 0);
-    this.pauseMenu.setDepth(2000);
+    this.pauseMenu.setDepth(3000); // Above tutorial overlay (2500) and skip button (2600)
     this.pauseMenu.setScrollFactor(0);
 
     // Semi-transparent overlay
