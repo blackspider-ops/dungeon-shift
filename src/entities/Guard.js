@@ -27,15 +27,18 @@ export default class Guard {
     // Get screen position from tile renderer
     const pos = scene.tileRenderer.getScreenPosition(gridX, gridY);
     
+    // Get dynamic scale from tile renderer (defaults to 2 if not available)
+    const spriteScale = scene.tileRenderer.tileScale || 2;
+    
     this.sprite = scene.add.sprite(pos.x, pos.y, 'patroller', 14);
     this.sprite.setOrigin(0.5, 0.5);
-    this.sprite.setScale(2); // Scale up to match player size
+    this.sprite.setScale(spriteScale); // Scale dynamically to match tile size
     // Depth will be set dynamically in GameScene.updateSpriteDepths()
     
     // Set initial animation
     this.sprite.play('guard_idle');
     
-    console.log(`Guard: Created at grid position (${gridX}, ${gridY})`);
+    console.log(`Guard: Created at grid position (${gridX}, ${gridY}), scale ${spriteScale}`);
   }
   
   /**

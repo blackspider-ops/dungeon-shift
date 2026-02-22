@@ -11,6 +11,7 @@ import { ChunkManager } from '../core/ChunkManager.js';
 import { ShiftSystem } from '../core/ShiftSystem.js';
 import AudioManager from '../utils/AudioManager.js';
 import { performanceMonitor } from '../utils/PerformanceMonitor.js';
+import { LiveSolutionFinder } from '../utils/LiveSolutionFinder.js';
 
 /**
  * UI Style Configuration
@@ -80,6 +81,7 @@ export default class GameScene extends Phaser.Scene {
     this.gameState = null;
     this.isProcessingTurn = false;
     this.isGameOver = false; // Track game over state
+    this.isPlayingSolution = false; // Track solution playback
     this.hudElements = {};
     this.levelLoader = new LevelLoader(this);
     this.currentLevelData = null;
@@ -95,7 +97,8 @@ export default class GameScene extends Phaser.Scene {
 
   init(data) {
     // Initialize with level data passed from Menu scene
-    this.levelId = data.levelId || 1;
+    // Use explicit check for undefined/null to allow level 0 (tutorial)
+    this.levelId = (data.levelId !== undefined && data.levelId !== null) ? data.levelId : 1;
     this.isGameOver = false; // Reset game over flag
     this.isProcessingTurn = false; // Reset turn processing flag
     console.log(`GameScene: Initializing level ${this.levelId}`);
@@ -153,13 +156,25 @@ export default class GameScene extends Phaser.Scene {
       shiftSystem: shiftSystemInstance,
       chunkManager: this.chunkManager
     };
+    console.log(`GameScene: Level ${this.levelId} initialized`);
 
     // Initialize turn manager with level's collapse meter
     this.turnManager = new TurnManager(this.currentLevelData.collapseMeter);
     console.log(`GameScene: TurnManager initialized with ${this.currentLevelData.collapseMeter} moves`);
 
+    // Initialize move sequence tracking for solution recording
+    this.moveSequence = [];
+
+    // Calculate UI scale based on grid size (smaller grids = larger UI)
+    this.uiScale = this.calculateUIScale();
+    console.log(`GameScene: UI scale set to ${this.uiScale}x`);
+
     // Create HUD
     this.createHUD();
+
+    // Save initial state for undo (before any moves)
+    this.turnManager.saveState(this.player, this.grid, this.gameState);
+    console.log('GameScene: Initial state saved for undo');
 
     // Track exit glow sprite
     this.exitGlowSprite = null;
@@ -182,6 +197,755 @@ export default class GameScene extends Phaser.Scene {
     if (this.audioManager) {
       this.audioManager.startBackgroundMusic();
     }
+
+    // Initialize tutorial system if this is the tutorial level
+    if (this.levelId === 0 && this.currentLevelData.tutorialSteps) {
+      this.initializeTutorial();
+    }
+  }
+
+  /**
+   * Initialize tutorial system
+   */
+  initializeTutorial() {
+    this.tutorialSteps = this.currentLevelData.tutorialSteps;
+    this.currentTutorialStep = 0;
+    this.tutorialCompleted = false;
+    this.hasMoved = false;
+
+    console.log('GameScene: Tutorial initialized with', this.tutorialSteps.length, 'steps');
+
+    // Set up Enter key for advancing tutorial
+    this.input.keyboard.on('keydown-ENTER', () => {
+      if (this.levelId === 0 && !this.tutorialCompleted) {
+        const currentStep = this.tutorialSteps[this.currentTutorialStep];
+        if (currentStep && currentStep.trigger === 'manual') {
+          this.advanceTutorial();
+        }
+      }
+    });
+
+    // Show first tutorial message after a short delay
+    this.time.delayedCall(1000, () => {
+      this.showTutorialMessage(this.tutorialSteps[0]);
+    });
+  }
+
+  /**
+   * Show tutorial message overlay with spotlight effect
+   */
+  showTutorialMessage(step) {
+    if (this.tutorialCompleted) return;
+
+    console.log('GameScene: Showing tutorial step', step.step, '-', step.message);
+
+    const width = this.cameras.main.width;
+    const height = this.cameras.main.height;
+
+    // Remove existing tutorial overlay if any
+    if (this.tutorialOverlay) {
+      this.tutorialOverlay.destroy();
+    }
+    if (this.tutorialBlur) {
+      if (this.tutorialBlur.spotlightBox) {
+        this.tutorialBlur.spotlightBox.destroy();
+        this.tutorialBlur.spotlightBox = null;
+      }
+      this.tutorialBlur.destroy();
+    }
+    if (this.tutorialArrow) {
+      this.tutorialArrow.destroy();
+    }
+
+    // Hide objective tracker during tutorial to avoid overlap
+    if (this.hudElements.objectiveTracker) {
+      this.hudElements.objectiveTracker.setVisible(false);
+    }
+
+    // Create blur overlay with cutout for spotlight
+    const spotlight = this.getSpotlightPosition(step.highlight);
+    
+    // Only create spotlight if highlight is not "none"
+    if (spotlight && step.highlight !== 'none') {
+      // Create 4 rectangles around the spotlight to darken everything else
+      const spotLeft = spotlight.x - spotlight.width/2;
+      const spotRight = spotlight.x + spotlight.width/2;
+      const spotTop = spotlight.y - spotlight.height/2;
+      const spotBottom = spotlight.y + spotlight.height/2;
+      
+      this.tutorialBlur = this.add.container(0, 0);
+      this.tutorialBlur.setDepth(2400);
+      this.tutorialBlur.setScrollFactor(0);
+      
+      // Top rectangle
+      const topRect = this.add.rectangle(width/2, spotTop/2, width, spotTop, 0x000000, 0.85);
+      this.tutorialBlur.add(topRect);
+      
+      // Bottom rectangle
+      const bottomRect = this.add.rectangle(width/2, spotBottom + (height - spotBottom)/2, width, height - spotBottom, 0x000000, 0.85);
+      this.tutorialBlur.add(bottomRect);
+      
+      // Left rectangle
+      const leftRect = this.add.rectangle(spotLeft/2, spotlight.y, spotLeft, spotlight.height, 0x000000, 0.85);
+      this.tutorialBlur.add(leftRect);
+      
+      // Right rectangle
+      const rightRect = this.add.rectangle(spotRight + (width - spotRight)/2, spotlight.y, width - spotRight, spotlight.height, 0x000000, 0.85);
+      this.tutorialBlur.add(rightRect);
+      
+      // Create glowing border around spotlight
+      const spotlightBox = this.add.rectangle(spotlight.x, spotlight.y, spotlight.width, spotlight.height, 0x000000, 0);
+      spotlightBox.setDepth(2401);
+      spotlightBox.setScrollFactor(0);
+      spotlightBox.setStrokeStyle(5, 0xffaa00, 1);
+      this.tutorialBlur.spotlightBox = spotlightBox;
+      
+      // Add pulsing glow effect to border
+      this.tweens.add({
+        targets: spotlightBox,
+        scaleX: 1.05,
+        scaleY: 1.05,
+        duration: 1000,
+        yoyo: true,
+        repeat: -1,
+        ease: 'Sine.easeInOut'
+      });
+
+      // Create arrow pointing to the element
+      this.tutorialArrow = this.add.container(0, 0);
+      this.tutorialArrow.setDepth(2450);
+      this.tutorialArrow.setScrollFactor(0);
+      
+      const arrowGraphics = this.add.graphics();
+      arrowGraphics.lineStyle(4, 0xffaa00, 1);
+      arrowGraphics.fillStyle(0xffaa00, 1);
+      
+      // Calculate arrow position (point from message to spotlight)
+      const messageY = height - 180;
+      const arrowStartX = width / 2;
+      const arrowStartY = messageY - 70;
+      const arrowEndX = spotlight.x;
+      const arrowEndY = spotlight.y;
+      
+      // Draw arrow line
+      arrowGraphics.beginPath();
+      arrowGraphics.moveTo(arrowStartX, arrowStartY);
+      arrowGraphics.lineTo(arrowEndX, arrowEndY);
+      arrowGraphics.strokePath();
+      
+      // Draw arrowhead
+      const angle = Math.atan2(arrowEndY - arrowStartY, arrowEndX - arrowStartX);
+      const arrowSize = 15;
+      arrowGraphics.beginPath();
+      arrowGraphics.moveTo(arrowEndX, arrowEndY);
+      arrowGraphics.lineTo(
+        arrowEndX - arrowSize * Math.cos(angle - Math.PI / 6),
+        arrowEndY - arrowSize * Math.sin(angle - Math.PI / 6)
+      );
+      arrowGraphics.lineTo(
+        arrowEndX - arrowSize * Math.cos(angle + Math.PI / 6),
+        arrowEndY - arrowSize * Math.sin(angle + Math.PI / 6)
+      );
+      arrowGraphics.closePath();
+      arrowGraphics.fillPath();
+      
+      this.tutorialArrow.add(arrowGraphics);
+      
+      // Pulsing animation for arrow
+      this.tweens.add({
+        targets: this.tutorialArrow,
+        alpha: 0.5,
+        duration: 800,
+        yoyo: true,
+        repeat: -1,
+        ease: 'Sine.easeInOut'
+      });
+    } else {
+      // No spotlight, just darken everything slightly
+      this.tutorialBlur = this.add.rectangle(width / 2, height / 2, width, height, 0x000000, 0.5);
+      this.tutorialBlur.setDepth(2400);
+      this.tutorialBlur.setScrollFactor(0);
+    }
+
+    // Position tutorial message at bottom of screen, above the buttons
+    const tutorialY = height - 180;
+
+    // Create tutorial overlay - positioned at bottom
+    this.tutorialOverlay = this.add.container(width / 2, tutorialY);
+    this.tutorialOverlay.setDepth(2500);
+    this.tutorialOverlay.setScrollFactor(0);
+
+    // Background panel
+    const panelWidth = 700;
+    const panelHeight = 120;
+    const panelBg = this.add.rectangle(0, 0, panelWidth, panelHeight, 0x000000, 0.95);
+    panelBg.setStrokeStyle(4, 0xffaa00);
+    this.tutorialOverlay.add(panelBg);
+
+    // Step indicator
+    const stepText = this.add.text(-panelWidth/2 + 15, -panelHeight/2 + 10, `Step ${step.step}/${this.tutorialSteps.length}`, {
+      font: 'bold 14px monospace',
+      fill: '#ffaa00',
+      stroke: '#000000',
+      strokeThickness: 2
+    });
+    stepText.setOrigin(0, 0);
+    this.tutorialOverlay.add(stepText);
+
+    // Tutorial message
+    const messageText = this.add.text(0, -10, step.message, {
+      font: '16px monospace',
+      fill: '#ffffff',
+      stroke: '#000000',
+      strokeThickness: 2,
+      align: 'center',
+      wordWrap: { width: panelWidth - 40 }
+    });
+    messageText.setOrigin(0.5);
+    this.tutorialOverlay.add(messageText);
+
+    // Continue button (for manual trigger steps)
+    if (step.trigger === 'manual') {
+      const continueButton = this.add.rectangle(0, panelHeight/2 - 25, 120, 30, 0x4a4a4a);
+      continueButton.setStrokeStyle(2, 0xffaa00);
+      continueButton.setInteractive({ useHandCursor: true });
+      
+      const continueText = this.add.text(0, panelHeight/2 - 25, 'Continue', {
+        font: 'bold 14px monospace',
+        fill: '#ffaa00',
+        stroke: '#000000',
+        strokeThickness: 2
+      });
+      continueText.setOrigin(0.5);
+      
+      this.tutorialOverlay.add(continueButton);
+      this.tutorialOverlay.add(continueText);
+      
+      // Button hover effects
+      continueButton.on('pointerover', () => {
+        continueButton.setFillStyle(0x6a6a6a);
+        continueText.setColor('#ffff00');
+      });
+      
+      continueButton.on('pointerout', () => {
+        continueButton.setFillStyle(0x4a4a4a);
+        continueText.setColor('#ffaa00');
+      });
+      
+      continueButton.on('pointerdown', () => {
+        this.advanceTutorial();
+      });
+    } else {
+      // Show action hint for non-manual steps
+      const hintText = this.add.text(0, panelHeight/2 - 15, this.getTutorialHint(step.trigger), {
+        font: '12px monospace',
+        fill: '#888888',
+        stroke: '#000000',
+        strokeThickness: 2
+      });
+      hintText.setOrigin(0.5);
+      this.tutorialOverlay.add(hintText);
+    }
+
+    // Fade in animation
+    this.tutorialOverlay.setAlpha(0);
+    this.tutorialBlur.setAlpha(0);
+    if (this.tutorialBlur.spotlightBox) {
+      this.tutorialBlur.spotlightBox.setAlpha(0);
+    }
+    
+    this.tweens.add({
+      targets: [this.tutorialOverlay, this.tutorialBlur, this.tutorialBlur.spotlightBox],
+      alpha: 1,
+      duration: 400,
+      ease: 'Power2'
+    });
+  }
+
+  /**
+   * Get spotlight position for tutorial highlight
+   */
+  getSpotlightPosition(highlight) {
+    const width = this.cameras.main.width;
+    const height = this.cameras.main.height;
+    
+    switch (highlight) {
+      case 'player':
+        if (this.player && this.player.sprite) {
+          return {
+            x: this.player.sprite.x,
+            y: this.player.sprite.y,
+            width: 120,
+            height: 120
+          };
+        }
+        break;
+        
+      case 'hud':
+        return {
+          x: 150,
+          y: 50,
+          width: 250,
+          height: 80
+        };
+        
+      case 'shift':
+        // Shift indicator position matches HUD creation
+        const shiftIndX = width - Math.round(160 * this.uiScale);
+        const shiftIndY = Math.round(80 * this.uiScale);
+        const shiftIndWidth = 150 * this.uiScale;
+        const shiftIndHeight = 120 * this.uiScale;
+        
+        return {
+          x: shiftIndX + shiftIndWidth / 2,
+          y: shiftIndY + shiftIndHeight / 2,
+          width: shiftIndWidth + 10,
+          height: shiftIndHeight + 10
+        };
+        
+      case 'grid':
+        return {
+          x: width / 2,
+          y: height / 2 - 50,
+          width: 200,
+          height: 180
+        };
+        
+      case 'walls':
+        // Find an actual wall tile on the grid
+        for (let y = 0; y < this.grid.height; y++) {
+          for (let x = 0; x < this.grid.width; x++) {
+            const tile = this.grid.getTile(x, y);
+            if (tile && tile.type === 'WALL') {
+              const screenPos = this.tileRenderer.getScreenPosition(x, y);
+              return {
+                x: screenPos.x,
+                y: screenPos.y,
+                width: 60,
+                height: 60
+              };
+            }
+          }
+        }
+        break;
+        
+      case 'key':
+        // Try to find key position
+        for (let y = 0; y < this.grid.height; y++) {
+          for (let x = 0; x < this.grid.width; x++) {
+            const tile = this.grid.getTile(x, y);
+            if (tile && tile.type === 'KEY') {
+              const screenPos = this.tileRenderer.getScreenPosition(x, y);
+              return {
+                x: screenPos.x,
+                y: screenPos.y,
+                width: 60,
+                height: 60
+              };
+            }
+          }
+        }
+        break;
+        
+      case 'trap':
+        // Try to find spike trap
+        for (let y = 0; y < this.grid.height; y++) {
+          for (let x = 0; x < this.grid.width; x++) {
+            const tile = this.grid.getTile(x, y);
+            if (tile && tile.type === 'SPIKE_TRAP') {
+              const screenPos = this.tileRenderer.getScreenPosition(x, y);
+              return {
+                x: screenPos.x,
+                y: screenPos.y,
+                width: 60,
+                height: 60
+              };
+            }
+          }
+        }
+        break;
+        
+      case 'enemy':
+        if (this.gameState.enemies && this.gameState.enemies.length > 0) {
+          const enemy = this.gameState.enemies[0];
+          if (enemy.sprite) {
+            return {
+              x: enemy.sprite.x,
+              y: enemy.sprite.y,
+              width: 80,
+              height: 80
+            };
+          }
+        }
+        break;
+        
+      case 'exit':
+        // Find the exit tile dynamically on the grid (since it moves with shifts)
+        for (let y = 0; y < this.grid.height; y++) {
+          for (let x = 0; x < this.grid.width; x++) {
+            const tile = this.grid.getTile(x, y);
+            if (tile && (tile.type === 'EXIT' || tile.type === 'EXIT_UNLOCKED' || tile.isExit)) {
+              const screenPos = this.tileRenderer.getScreenPosition(x, y);
+              console.log('GameScene: Found exit at grid', x, y, 'screen', screenPos);
+              return {
+                x: screenPos.x,
+                y: screenPos.y,
+                width: 80,
+                height: 80
+              };
+            }
+          }
+        }
+        // Fallback: use exit position from level data (but this won't account for shifts)
+        console.warn('GameScene: Exit not found on grid, using fallback position');
+        const exitPos = this.currentLevelData.exitPosition;
+        if (exitPos) {
+          const screenPos = this.tileRenderer.getScreenPosition(exitPos.x, exitPos.y);
+          return {
+            x: screenPos.x,
+            y: screenPos.y,
+            width: 80,
+            height: 80
+          };
+        }
+        break;
+        
+      case 'undo':
+        // Undo button position matches HUD creation
+        const undoBtnX = Math.round(15 * this.uiScale);
+        const undoBtnY = height - Math.round(80 * this.uiScale);
+        const undoBtnWidth = 100 * this.uiScale;
+        const undoBtnHeight = 30 * this.uiScale;
+        
+        return {
+          x: undoBtnX + undoBtnWidth / 2,
+          y: undoBtnY + undoBtnHeight / 2,
+          width: undoBtnWidth + 10,
+          height: undoBtnHeight + 10
+        };
+        
+      case 'hint':
+        // Hint button position matches HUD creation
+        const hintBtnX = Math.round(15 * this.uiScale);
+        const hintBtnY = height - Math.round(45 * this.uiScale);
+        const hintBtnWidth = 100 * this.uiScale;
+        const hintBtnHeight = 30 * this.uiScale;
+        
+        return {
+          x: hintBtnX + hintBtnWidth / 2,
+          y: hintBtnY + hintBtnHeight / 2,
+          width: hintBtnWidth + 10,
+          height: hintBtnHeight + 10
+        };
+        
+      case 'solution':
+        // Solution button position matches HUD creation
+        const solutionBtnX = width - Math.round(125 * this.uiScale);
+        const solutionBtnY = height - Math.round(45 * this.uiScale);
+        const solutionBtnWidth = 120 * this.uiScale;
+        const solutionBtnHeight = 30 * this.uiScale;
+        
+        return {
+          x: solutionBtnX + solutionBtnWidth / 2,
+          y: solutionBtnY + solutionBtnHeight / 2,
+          width: solutionBtnWidth + 10,
+          height: solutionBtnHeight + 10
+        };
+        
+      case 'pause':
+        // Pause hint position (top-right corner)
+        const topY = Math.round(10 * this.uiScale);
+        const pauseText = this.hudElements.pauseHint;
+        if (pauseText) {
+          return {
+            x: width - 15 - 50,
+            y: topY + 10,
+            width: 100,
+            height: 20
+          };
+        }
+        break;
+        
+      case 'mute':
+        // Mute hint position (below pause hint)
+        const topY2 = Math.round(10 * this.uiScale);
+        const muteText = this.hudElements.muteHint;
+        if (muteText) {
+          return {
+            x: width - 15 - 40,
+            y: topY2 + 30,
+            width: 80,
+            height: 20
+          };
+        }
+        break;
+    }
+    
+    return null;
+  }
+
+  /**
+   * Update tutorial spotlight position (for dynamic elements like player)
+   */
+  updateTutorialSpotlight() {
+    if (!this.tutorialBlur || !this.tutorialBlur.spotlightBox) return;
+    
+    const currentStep = this.tutorialSteps[this.currentTutorialStep];
+    const spotlight = this.getSpotlightPosition(currentStep.highlight);
+    
+    if (!spotlight) return;
+    
+    const width = this.cameras.main.width;
+    const height = this.cameras.main.height;
+    
+    // Update spotlight box position
+    this.tutorialBlur.spotlightBox.setPosition(spotlight.x, spotlight.y);
+    
+    // Update blur rectangles positions
+    const spotLeft = spotlight.x - spotlight.width/2;
+    const spotRight = spotlight.x + spotlight.width/2;
+    const spotTop = spotlight.y - spotlight.height/2;
+    const spotBottom = spotlight.y + spotlight.height/2;
+    
+    const rects = this.tutorialBlur.list;
+    if (rects.length >= 4) {
+      // Top rectangle
+      rects[0].setPosition(width/2, spotTop/2);
+      rects[0].setSize(width, spotTop);
+      
+      // Bottom rectangle
+      rects[1].setPosition(width/2, spotBottom + (height - spotBottom)/2);
+      rects[1].setSize(width, height - spotBottom);
+      
+      // Left rectangle
+      rects[2].setPosition(spotLeft/2, spotlight.y);
+      rects[2].setSize(spotLeft, spotlight.height);
+      
+      // Right rectangle
+      rects[3].setPosition(spotRight + (width - spotRight)/2, spotlight.y);
+      rects[3].setSize(width - spotRight, spotlight.height);
+    }
+    
+    // Update arrow position
+    if (this.tutorialArrow) {
+      const arrowGraphics = this.tutorialArrow.list[0];
+      if (arrowGraphics) {
+        arrowGraphics.clear();
+        arrowGraphics.lineStyle(4, 0xffaa00, 1);
+        arrowGraphics.fillStyle(0xffaa00, 1);
+        
+        // Calculate arrow position (point from message to spotlight)
+        const messageY = height - 180;
+        const arrowStartX = width / 2;
+        const arrowStartY = messageY - 70;
+        const arrowEndX = spotlight.x;
+        const arrowEndY = spotlight.y;
+        
+        // Draw arrow line
+        arrowGraphics.beginPath();
+        arrowGraphics.moveTo(arrowStartX, arrowStartY);
+        arrowGraphics.lineTo(arrowEndX, arrowEndY);
+        arrowGraphics.strokePath();
+        
+        // Draw arrowhead
+        const angle = Math.atan2(arrowEndY - arrowStartY, arrowEndX - arrowStartX);
+        const arrowSize = 15;
+        arrowGraphics.beginPath();
+        arrowGraphics.moveTo(arrowEndX, arrowEndY);
+        arrowGraphics.lineTo(
+          arrowEndX - arrowSize * Math.cos(angle - Math.PI / 6),
+          arrowEndY - arrowSize * Math.sin(angle - Math.PI / 6)
+        );
+        arrowGraphics.lineTo(
+          arrowEndX - arrowSize * Math.cos(angle + Math.PI / 6),
+          arrowEndY - arrowSize * Math.sin(angle + Math.PI / 6)
+        );
+        arrowGraphics.closePath();
+        arrowGraphics.fillPath();
+      }
+    }
+  }
+
+  /**
+   * Get hint text for tutorial step trigger
+   */
+  getTutorialHint(trigger) {
+    switch (trigger) {
+      case 'move':
+        return 'Try moving to continue...';
+      case 'keyCollected':
+        return 'Collect the key to continue...';
+      default:
+        return '';
+    }
+  }
+
+  /**
+   * Manually advance tutorial to next step
+   */
+  advanceTutorial() {
+    if (this.tutorialCompleted) return;
+    
+    this.currentTutorialStep++;
+    
+    if (this.currentTutorialStep < this.tutorialSteps.length) {
+      const nextStep = this.tutorialSteps[this.currentTutorialStep];
+      
+      // If next step waits for key collection, hide the overlay
+      if (nextStep.trigger === 'keyCollected') {
+        // Hide tutorial overlay to let player explore
+        if (this.tutorialOverlay) {
+          this.tutorialOverlay.setVisible(false);
+        }
+        if (this.tutorialBlur) {
+          this.tutorialBlur.setVisible(false);
+          if (this.tutorialBlur.spotlightBox) {
+            this.tutorialBlur.spotlightBox.setVisible(false);
+          }
+        }
+        if (this.tutorialArrow) {
+          this.tutorialArrow.setVisible(false);
+        }
+      } else {
+        this.showTutorialMessage(nextStep);
+      }
+    } else {
+      // Tutorial completed
+      this.completeTutorial();
+    }
+  }
+
+  /**
+   * Complete the tutorial
+   */
+  completeTutorial() {
+    this.tutorialCompleted = true;
+    
+    const elementsToFade = [this.tutorialOverlay];
+    if (this.tutorialBlur) {
+      elementsToFade.push(this.tutorialBlur);
+      if (this.tutorialBlur.spotlightBox) elementsToFade.push(this.tutorialBlur.spotlightBox);
+    }
+    if (this.tutorialArrow) elementsToFade.push(this.tutorialArrow);
+    
+    this.tweens.add({
+      targets: elementsToFade,
+      alpha: 0,
+      duration: 400,
+      onComplete: () => {
+        if (this.tutorialOverlay) {
+          this.tutorialOverlay.destroy();
+          this.tutorialOverlay = null;
+        }
+        if (this.tutorialBlur) {
+          if (this.tutorialBlur.spotlightBox) {
+            this.tutorialBlur.spotlightBox.destroy();
+          }
+          this.tutorialBlur.destroy();
+          this.tutorialBlur = null;
+        }
+        if (this.tutorialArrow) {
+          this.tutorialArrow.destroy();
+          this.tutorialArrow = null;
+        }
+        // Show objective tracker again after tutorial
+        if (this.hudElements.objectiveTracker) {
+          this.hudElements.objectiveTracker.setVisible(true);
+        }
+      }
+    });
+    console.log('GameScene: Tutorial completed!');
+  }
+
+  /**
+   * Check and advance tutorial progress
+   */
+  checkTutorialProgress() {
+    if (!this.tutorialSteps || this.tutorialCompleted || this.currentTutorialStep >= this.tutorialSteps.length) {
+      return;
+    }
+
+    const currentStep = this.tutorialSteps[this.currentTutorialStep];
+    console.log('GameScene: Checking tutorial progress for step', this.currentTutorialStep, 'trigger:', currentStep.trigger);
+
+    // Skip manual steps - they advance via button click
+    if (currentStep.trigger === 'manual') {
+      return;
+    }
+
+    // Check if step condition is met
+    let conditionMet = false;
+
+    switch (currentStep.trigger) {
+      case 'start':
+        // Already shown at start
+        break;
+      
+      case 'move':
+        if (this.hasMoved) {
+          console.log('GameScene: Move condition met!');
+          conditionMet = true;
+        }
+        break;
+      
+      case 'keyCollected':
+        if (this.player.keysCollected > 0) {
+          console.log('GameScene: Key collected condition met!');
+          conditionMet = true;
+        }
+        break;
+    }
+
+    if (conditionMet) {
+      console.log('GameScene: Advancing from step', this.currentTutorialStep, 'to', this.currentTutorialStep + 1);
+      this.currentTutorialStep++;
+      
+      if (this.currentTutorialStep < this.tutorialSteps.length) {
+        // Show next step after a delay
+        this.time.delayedCall(500, () => {
+          this.showTutorialMessage(this.tutorialSteps[this.currentTutorialStep]);
+        });
+      } else {
+        // Tutorial completed
+        this.completeTutorial();
+      }
+    }
+  }
+
+  /**
+   * Calculate UI scale based on grid size
+   * Smaller grids get larger UI elements
+   * @returns {number} UI scale multiplier
+   */
+  calculateUIScale() {
+    const gridSize = Math.max(this.grid.width, this.grid.height);
+    
+    // Scale UI based on grid size
+    if (gridSize <= 8) {
+      return 1.3; // Small grids (8x8) get 30% larger UI
+    } else if (gridSize <= 10) {
+      return 1.15; // Medium grids get 15% larger UI
+    } else {
+      return 1.0; // Large grids (12x12+) get normal UI
+    }
+  }
+
+  /**
+   * Scale a font string by the UI scale factor
+   * @param {string} font - Original font string (e.g., "bold 16px monospace")
+   * @returns {string} Scaled font string
+   */
+  scaleFont(font) {
+    if (!this.uiScale || this.uiScale === 1.0) return font;
+    
+    // Extract font size and scale it
+    const match = font.match(/(\d+)px/);
+    if (match) {
+      const originalSize = parseInt(match[1]);
+      const scaledSize = Math.round(originalSize * this.uiScale);
+      return font.replace(/\d+px/, `${scaledSize}px`);
+    }
+    return font;
   }
 
   /**
@@ -222,20 +986,20 @@ export default class GameScene extends Phaser.Scene {
       const width = this.cameras.main.width;
       const height = this.cameras.main.height;
 
-      // Create HUD background panel (top bar)
-      const hudHeight = 70;
+      // Create HUD background panel (top bar) - scale height with UI
+      const hudHeight = Math.round(70 * this.uiScale);
       this.hudElements.hudBackground = this.add.rectangle(0, 0, width, hudHeight, UI_STYLES.colors.background, UI_STYLES.colors.backgroundAlpha);
       this.hudElements.hudBackground.setOrigin(0, 0);
       this.hudElements.hudBackground.setDepth(1000);
       this.hudElements.hudBackground.setScrollFactor(0);
 
       // Left section - Game stats
-      const leftX = 15;
-      const topY = 10;
+      const leftX = Math.round(15 * this.uiScale);
+      const topY = Math.round(10 * this.uiScale);
 
       // Collapse meter with icon
       this.hudElements.collapseMeterText = this.add.text(leftX, topY, '', {
-        font: UI_STYLES.fonts.heading,
+        font: this.scaleFont(UI_STYLES.fonts.heading),
         fill: UI_STYLES.colors.text,
         stroke: UI_STYLES.colors.textStroke,
         strokeThickness: UI_STYLES.stroke.medium
@@ -244,8 +1008,8 @@ export default class GameScene extends Phaser.Scene {
       this.hudElements.collapseMeterText.setScrollFactor(0);
 
       // HP hearts with label
-      this.hudElements.hpLabel = this.add.text(leftX, topY + 22, 'HP:', {
-        font: UI_STYLES.fonts.bodyBold,
+      this.hudElements.hpLabel = this.add.text(leftX, topY + Math.round(22 * this.uiScale), 'HP:', {
+        font: this.scaleFont(UI_STYLES.fonts.bodyBold),
         fill: UI_STYLES.colors.textSecondary,
         stroke: UI_STYLES.colors.textStroke,
         strokeThickness: UI_STYLES.stroke.medium
@@ -253,8 +1017,8 @@ export default class GameScene extends Phaser.Scene {
       this.hudElements.hpLabel.setDepth(1001);
       this.hudElements.hpLabel.setScrollFactor(0);
 
-      this.hudElements.hpText = this.add.text(leftX + 35, topY + 22, '', {
-        font: UI_STYLES.fonts.heading,
+      this.hudElements.hpText = this.add.text(leftX + Math.round(35 * this.uiScale), topY + Math.round(22 * this.uiScale), '', {
+        font: this.scaleFont(UI_STYLES.fonts.heading),
         fill: UI_STYLES.colors.hp,
         stroke: UI_STYLES.colors.textStroke,
         strokeThickness: UI_STYLES.stroke.medium
@@ -263,8 +1027,8 @@ export default class GameScene extends Phaser.Scene {
       this.hudElements.hpText.setScrollFactor(0);
 
       // Keys collected with icon
-      this.hudElements.keysText = this.add.text(leftX + 150, topY, '', {
-        font: UI_STYLES.fonts.heading,
+      this.hudElements.keysText = this.add.text(leftX + Math.round(150 * this.uiScale), topY, '', {
+        font: this.scaleFont(UI_STYLES.fonts.heading),
         fill: UI_STYLES.colors.key,
         stroke: UI_STYLES.colors.textStroke,
         strokeThickness: UI_STYLES.stroke.medium
@@ -273,8 +1037,8 @@ export default class GameScene extends Phaser.Scene {
       this.hudElements.keysText.setScrollFactor(0);
 
       // Turn counter
-      this.hudElements.turnText = this.add.text(leftX + 150, topY + 22, '', {
-        font: UI_STYLES.fonts.bodyBold,
+      this.hudElements.turnText = this.add.text(leftX + Math.round(150 * this.uiScale), topY + Math.round(22 * this.uiScale), '', {
+        font: this.scaleFont(UI_STYLES.fonts.bodyBold),
         fill: UI_STYLES.colors.textSecondary,
         stroke: UI_STYLES.colors.textStroke,
         strokeThickness: UI_STYLES.stroke.medium
@@ -283,8 +1047,8 @@ export default class GameScene extends Phaser.Scene {
       this.hudElements.turnText.setScrollFactor(0);
 
       // Inventory display (bottom of HUD)
-      this.hudElements.inventoryText = this.add.text(leftX, topY + 44, '', {
-        font: UI_STYLES.fonts.small,
+      this.hudElements.inventoryText = this.add.text(leftX, topY + Math.round(44 * this.uiScale), '', {
+        font: this.scaleFont(UI_STYLES.fonts.small),
         fill: UI_STYLES.colors.textSecondary,
         stroke: UI_STYLES.colors.textStroke,
         strokeThickness: UI_STYLES.stroke.medium
@@ -329,6 +1093,212 @@ export default class GameScene extends Phaser.Scene {
         this.toggleMute();
       });
 
+      // Skip Tutorial button (only shown during tutorial - level 0)
+      // Positioned in top-right corner below shift indicator
+      if (this.levelId === 0) {
+        const skipX = width - Math.round(15 * this.uiScale);
+        const skipY = Math.round(220 * this.uiScale);
+
+        this.hudElements.skipTutorialButton = this.add.container(skipX, skipY);
+        this.hudElements.skipTutorialButton.setDepth(2600); // Above tutorial overlay (2500)
+        this.hudElements.skipTutorialButton.setScrollFactor(0);
+        this.hudElements.skipTutorialButton.setScale(this.uiScale);
+
+        const skipButtonBg = this.add.rectangle(0, 0, 140, 35, UI_STYLES.colors.buttonNormal);
+        skipButtonBg.setOrigin(1, 0);
+        skipButtonBg.setStrokeStyle(UI_STYLES.stroke.medium, UI_STYLES.colors.warning);
+        skipButtonBg.setInteractive({ useHandCursor: true });
+
+        const skipButtonText = this.add.text(-70, 17.5, 'Skip Tutorial', {
+          font: UI_STYLES.fonts.small,
+          fill: UI_STYLES.colors.warning,
+          stroke: UI_STYLES.colors.textStroke,
+          strokeThickness: UI_STYLES.stroke.medium
+        });
+        skipButtonText.setOrigin(0.5);
+
+        this.hudElements.skipTutorialButton.add(skipButtonBg);
+        this.hudElements.skipTutorialButton.add(skipButtonText);
+
+        // Button hover effects
+        skipButtonBg.on('pointerover', () => {
+          skipButtonBg.setFillStyle(UI_STYLES.colors.buttonHover);
+          skipButtonText.setColor('#ffff00');
+        });
+
+        skipButtonBg.on('pointerout', () => {
+          skipButtonBg.setFillStyle(UI_STYLES.colors.buttonNormal);
+          skipButtonText.setColor(UI_STYLES.colors.warning);
+        });
+
+        skipButtonBg.on('pointerdown', () => {
+          this.skipTutorial();
+        });
+      }
+
+      // Undo button (bottom-left corner)
+      const undoX = Math.round(15 * this.uiScale);
+      const undoY = height - Math.round(80 * this.uiScale);
+
+      this.hudElements.undoButton = this.add.container(undoX, undoY);
+      this.hudElements.undoButton.setDepth(1001);
+      this.hudElements.undoButton.setScrollFactor(0);
+      this.hudElements.undoButton.setScale(this.uiScale);
+
+      const undoButtonBg = this.add.rectangle(0, 0, 100, 30, UI_STYLES.colors.buttonNormal);
+      undoButtonBg.setOrigin(0, 0);
+      undoButtonBg.setStrokeStyle(UI_STYLES.stroke.medium, UI_STYLES.colors.border);
+      undoButtonBg.setInteractive({ useHandCursor: true });
+
+      const undoButtonText = this.add.text(50, 15, '[U] Undo', {
+        font: UI_STYLES.fonts.small,
+        fill: UI_STYLES.colors.text,
+        stroke: UI_STYLES.colors.textStroke,
+        strokeThickness: UI_STYLES.stroke.medium
+      });
+      undoButtonText.setOrigin(0.5);
+
+      this.hudElements.undoButton.add(undoButtonBg);
+      this.hudElements.undoButton.add(undoButtonText);
+
+      // Undo button hover effects
+      undoButtonBg.on('pointerover', () => {
+        if (this.turnManager && this.turnManager.canUndo()) {
+          undoButtonBg.setFillStyle(UI_STYLES.colors.buttonHover);
+          undoButtonText.setColor(UI_STYLES.colors.info);
+        }
+      });
+
+      undoButtonBg.on('pointerout', () => {
+        undoButtonBg.setFillStyle(UI_STYLES.colors.buttonNormal);
+        undoButtonText.setColor(UI_STYLES.colors.text);
+      });
+
+      undoButtonBg.on('pointerdown', () => {
+        this.handleUndo();
+      });
+
+      // Set up U key for undo
+      this.input.keyboard.on('keydown-U', () => {
+        this.handleUndo();
+      });
+
+      // Undo counter text (to the right of undo button, accounting for button scale)
+      const undoCountX = undoX + Math.round(130 * this.uiScale);
+      const undoCountY = undoY + Math.round(15 * this.uiScale);
+      this.hudElements.undoCountText = this.add.text(undoCountX, undoCountY, 'Undo: 5/5', {
+        font: this.scaleFont(UI_STYLES.fonts.small),
+        fill: UI_STYLES.colors.text,
+        stroke: UI_STYLES.colors.textStroke,
+        strokeThickness: UI_STYLES.stroke.medium
+      });
+      this.hudElements.undoCountText.setOrigin(0, 0.5);
+      this.hudElements.undoCountText.setDepth(1001);
+      this.hudElements.undoCountText.setScrollFactor(0);
+
+      // Hint button (bottom-left, below undo)
+      const hintX = Math.round(15 * this.uiScale);
+      const hintY = height - Math.round(45 * this.uiScale);
+
+      this.hudElements.hintButton = this.add.container(hintX, hintY);
+      this.hudElements.hintButton.setDepth(1001);
+      this.hudElements.hintButton.setScrollFactor(0);
+      this.hudElements.hintButton.setScale(this.uiScale);
+
+      const hintButtonBg = this.add.rectangle(0, 0, 100, 30, UI_STYLES.colors.buttonNormal);
+      hintButtonBg.setOrigin(0, 0);
+      hintButtonBg.setStrokeStyle(UI_STYLES.stroke.medium, UI_STYLES.colors.border);
+      hintButtonBg.setInteractive({ useHandCursor: true });
+
+      const hintButtonText = this.add.text(50, 15, '[H] Hint', {
+        font: UI_STYLES.fonts.small,
+        fill: UI_STYLES.colors.text,
+        stroke: UI_STYLES.colors.textStroke,
+        strokeThickness: UI_STYLES.stroke.medium
+      });
+      hintButtonText.setOrigin(0.5);
+
+      this.hudElements.hintButton.add(hintButtonBg);
+      this.hudElements.hintButton.add(hintButtonText);
+
+      // Hint button hover effects
+      hintButtonBg.on('pointerover', () => {
+        hintButtonBg.setFillStyle(UI_STYLES.colors.buttonHover);
+        hintButtonText.setColor(UI_STYLES.colors.warning);
+      });
+
+      hintButtonBg.on('pointerout', () => {
+        hintButtonBg.setFillStyle(UI_STYLES.colors.buttonNormal);
+        hintButtonText.setColor(UI_STYLES.colors.text);
+      });
+
+      hintButtonBg.on('pointerdown', () => {
+        this.showHint();
+      });
+
+      // Set up H key for hint
+      this.input.keyboard.on('keydown-H', () => {
+        this.showHint();
+      });
+
+      // Hint status text (to the right of hint button, accounting for button scale)
+      const hintStatusX = hintX + Math.round(130 * this.uiScale);
+      const hintStatusY = hintY + Math.round(15 * this.uiScale);
+      this.hudElements.hintStatusText = this.add.text(hintStatusX, hintStatusY, 'Hint: Available', {
+        font: this.scaleFont(UI_STYLES.fonts.small),
+        fill: UI_STYLES.colors.warning,
+        stroke: UI_STYLES.colors.textStroke,
+        strokeThickness: UI_STYLES.stroke.medium
+      });
+      this.hudElements.hintStatusText.setOrigin(0, 0.5);
+      this.hudElements.hintStatusText.setDepth(1001);
+      this.hudElements.hintStatusText.setScrollFactor(0);
+
+      // Solution button (bottom-right corner)
+      const solutionX = width - Math.round(125 * this.uiScale);
+      const solutionY = height - Math.round(45 * this.uiScale);
+
+      this.hudElements.solutionButton = this.add.container(solutionX, solutionY);
+      this.hudElements.solutionButton.setDepth(1001);
+      this.hudElements.solutionButton.setScrollFactor(0);
+      this.hudElements.solutionButton.setScale(this.uiScale);
+
+      const solutionButtonBg = this.add.rectangle(0, 0, 120, 30, UI_STYLES.colors.buttonNormal);
+      solutionButtonBg.setOrigin(0, 0);
+      solutionButtonBg.setStrokeStyle(UI_STYLES.stroke.medium, UI_STYLES.colors.border);
+      solutionButtonBg.setInteractive({ useHandCursor: true });
+
+      const solutionButtonText = this.add.text(60, 15, '[P] Solution', {
+        font: UI_STYLES.fonts.small,
+        fill: UI_STYLES.colors.text,
+        stroke: UI_STYLES.colors.textStroke,
+        strokeThickness: UI_STYLES.stroke.medium
+      });
+      solutionButtonText.setOrigin(0.5);
+
+      this.hudElements.solutionButton.add(solutionButtonBg);
+      this.hudElements.solutionButton.add(solutionButtonText);
+
+      // Solution button hover effects
+      solutionButtonBg.on('pointerover', () => {
+        solutionButtonBg.setFillStyle(UI_STYLES.colors.buttonHover);
+        solutionButtonText.setColor(UI_STYLES.colors.success);
+      });
+
+      solutionButtonBg.on('pointerout', () => {
+        solutionButtonBg.setFillStyle(UI_STYLES.colors.buttonNormal);
+        solutionButtonText.setColor(UI_STYLES.colors.text);
+      });
+
+      solutionButtonBg.on('pointerdown', () => {
+        this.showSolutionConfirm();
+      });
+
+      // Set up P key for solution (P = Play solution)
+      this.input.keyboard.on('keydown-P', () => {
+        this.showSolutionConfirm();
+      });
+
       // Performance monitoring FPS counter (development only)
       if (this.enablePerformanceMonitoring) {
         performanceMonitor.enable();
@@ -344,12 +1314,14 @@ export default class GameScene extends Phaser.Scene {
    */
   createShiftIndicator() {
     const width = this.cameras.main.width;
-    const indicatorX = width - 160;
-    const indicatorY = 80;
+    const indicatorX = width - Math.round(160 * this.uiScale);
+    const indicatorY = Math.round(80 * this.uiScale);
 
     // Create container for shift indicator
     this.hudElements.shiftIndicator = this.add.container(indicatorX, indicatorY);
     this.hudElements.shiftIndicator.setDepth(1001);
+    this.hudElements.shiftIndicator.setScrollFactor(0);
+    this.hudElements.shiftIndicator.setScale(this.uiScale);
     this.hudElements.shiftIndicator.setScrollFactor(0);
 
     // Background panel
@@ -400,12 +1372,13 @@ export default class GameScene extends Phaser.Scene {
     const width = this.cameras.main.width;
     const height = this.cameras.main.height;
     const trackerX = width / 2;
-    const trackerY = height - 60;
+    const trackerY = height - Math.round(100 * this.uiScale); // Moved up from 60 to 100 to avoid button overlap
 
     // Create container for objective tracker
     this.hudElements.objectiveTracker = this.add.container(trackerX, trackerY);
     this.hudElements.objectiveTracker.setDepth(1001);
     this.hudElements.objectiveTracker.setScrollFactor(0);
+    this.hudElements.objectiveTracker.setScale(this.uiScale);
 
     // Background panel
     const panelBg = this.add.rectangle(0, 0, 300, 50, UI_STYLES.colors.background, UI_STYLES.colors.backgroundAlpha);
@@ -447,8 +1420,8 @@ export default class GameScene extends Phaser.Scene {
    * Toggle pause menu on/off
    */
   togglePauseMenu() {
-    // Don't allow pausing during game over
-    if (this.isGameOver) {
+    // Don't allow pausing during game over or solution playback
+    if (this.isGameOver || this.isPlayingSolution) {
       return;
     }
     
@@ -473,6 +1446,14 @@ export default class GameScene extends Phaser.Scene {
     }
     
     console.log(`GameScene: Audio ${isMuted ? 'muted' : 'unmuted'}`);
+  }
+
+  /**
+   * Skip tutorial and go directly to level 1
+   */
+  skipTutorial() {
+    console.log('GameScene: Skipping tutorial');
+    this.scene.start('GameScene', { levelId: 1 });
   }
 
   /**
@@ -738,6 +1719,30 @@ export default class GameScene extends Phaser.Scene {
 
       // Update turn counter
       this.hudElements.turnText.setText(`Turn: ${this.turnManager.getTurnNumber()}`);
+
+      // Update undo counter
+      if (this.hudElements.undoCountText) {
+        const undoRemaining = this.turnManager.getUndoCount();
+        const undoMax = this.turnManager.maxUndos;
+        this.hudElements.undoCountText.setText(`Undo: ${undoRemaining}/${undoMax}`);
+        
+        // Color code based on availability
+        if (undoRemaining === 0) {
+          this.hudElements.undoCountText.setColor('#888888');
+        } else if (undoRemaining <= 1) {
+          this.hudElements.undoCountText.setColor('#ff0000');
+        } else {
+          this.hudElements.undoCountText.setColor('#ffffff');
+        }
+      }
+
+      // Update hint status
+      if (this.hudElements.hintStatusText) {
+        const hintText = this.turnManager.hintUsed ? 'Hint: Used' : 'Hint: Available';
+        const hintColor = this.turnManager.hintUsed ? '#888888' : '#ffaa00';
+        this.hudElements.hintStatusText.setText(hintText);
+        this.hudElements.hintStatusText.setColor(hintColor);
+      }
 
       // Update inventory display
       this.updateInventoryDisplay();
@@ -1124,8 +2129,8 @@ export default class GameScene extends Phaser.Scene {
     // Update sprite depths based on Y position for proper layering
     this.updateSpriteDepths();
 
-    // Don't process input if we're already processing a turn or game is over
-    if (this.isProcessingTurn || this.isGameOver) {
+    // Don't process input if we're already processing a turn, game is over, or playing solution
+    if (this.isProcessingTurn || this.isGameOver || this.isPlayingSolution) {
       return;
     }
 
@@ -1240,6 +2245,11 @@ export default class GameScene extends Phaser.Scene {
       this.gameState
     );
 
+    // Track move sequence for solution recording (only if move was successful)
+    if (turnResult.success) {
+      this.moveSequence.push(direction);
+    }
+
     // Play movement sound if move was successful
     if (turnResult.success && this.audioManager) {
       this.audioManager.playMovementSound();
@@ -1324,6 +2334,28 @@ export default class GameScene extends Phaser.Scene {
 
     // Update HUD
     this.updateHUD();
+
+    // Check tutorial progress if in tutorial (check after every move and after key collection)
+    if (this.levelId === 0) {
+      this.hasMoved = true;
+      this.checkTutorialProgress();
+      
+      // Update spotlight position if it's highlighting the player
+      if (this.tutorialSteps && !this.tutorialCompleted && this.currentTutorialStep < this.tutorialSteps.length) {
+        const currentStep = this.tutorialSteps[this.currentTutorialStep];
+        if (currentStep && currentStep.highlight === 'player') {
+          this.updateTutorialSpotlight();
+        }
+      }
+      
+      // Also check if key was collected this turn
+      if (turnResult.collectedItems && turnResult.collectedItems.length > 0) {
+        // Small delay to let key collection register
+        this.time.delayedCall(100, () => {
+          this.checkTutorialProgress();
+        });
+      }
+    }
 
     // Handle turn result
     if (turnResult.success) {
@@ -1704,7 +2736,8 @@ export default class GameScene extends Phaser.Scene {
     });
 
     // Check if there's a next level
-    const nextLevelId = this.levelId + 1;
+    // Tutorial (level 0) always goes to level 1
+    const nextLevelId = this.levelId === 0 ? 1 : this.levelId + 1;
     const hasNextLevel = this.levelLoader.levelExists(nextLevelId);
 
     if (hasNextLevel) {
@@ -2026,11 +3059,18 @@ export default class GameScene extends Phaser.Scene {
    */
   saveLevelProgress() {
     try {
+      console.log(`GameScene: Saving progress for level ${this.levelId}`);
+      console.log(`GameScene: Move sequence:`, this.moveSequence);
+      
       // Load existing progress
-      let progress = { maxLevel: 1 };
+      let progress = { maxLevel: 1, solutions: {} };
       const saved = localStorage.getItem('dungeonShiftProgress');
       if (saved) {
         progress = JSON.parse(saved);
+        // Ensure solutions object exists
+        if (!progress.solutions) {
+          progress.solutions = {};
+        }
       }
 
       // Update max level if current level is higher
@@ -2039,11 +3079,59 @@ export default class GameScene extends Phaser.Scene {
         progress.maxLevel = nextLevel;
       }
 
+      // Save solution if it's better than existing one (or first completion)
+      const levelKey = `level${this.levelId}`;
+      const currentMoveCount = this.moveSequence ? this.moveSequence.length : 0;
+      const existingSolution = progress.solutions[levelKey];
+
+      // Check if this is a better solution
+      const shouldSaveSolution = !existingSolution || 
+                                 !existingSolution.moves || 
+                                 currentMoveCount < existingSolution.moves.length;
+
+      if (shouldSaveSolution && this.moveSequence && this.moveSequence.length > 0) {
+        progress.solutions[levelKey] = {
+          moves: [...this.moveSequence],
+          moveCount: currentMoveCount,
+          timestamp: Date.now()
+        };
+        console.log(`GameScene: New best solution saved for level ${this.levelId} (${currentMoveCount} moves)`);
+      } else if (existingSolution) {
+        console.log(`GameScene: Existing solution is better (${existingSolution.moves.length} vs ${currentMoveCount} moves)`);
+      } else {
+        console.log(`GameScene: No move sequence to save`);
+      }
+
       // Save back to localStorage
       localStorage.setItem('dungeonShiftProgress', JSON.stringify(progress));
-      console.log(`GameScene: Progress saved - Max level: ${progress.maxLevel}`);
+      console.log(`GameScene: Progress saved successfully - Max level: ${progress.maxLevel}`);
     } catch (e) {
       console.error('GameScene: Error saving progress', e);
+      console.error('Stack trace:', e.stack);
+    }
+  }
+
+  /**
+   * Check if the current level has been completed before
+   * @returns {boolean} True if level has been completed
+   */
+  hasCompletedLevel() {
+    try {
+      const saved = localStorage.getItem('dungeonShiftProgress');
+      if (!saved) {
+        return false;
+      }
+
+      const progress = JSON.parse(saved);
+      if (!progress.solutions) {
+        return false;
+      }
+
+      const levelKey = `level${this.levelId}`;
+      return !!progress.solutions[levelKey];
+    } catch (e) {
+      console.error('GameScene: Error checking level completion', e);
+      return false;
     }
   }
 
@@ -2415,6 +3503,595 @@ export default class GameScene extends Phaser.Scene {
           message.destroy();
         }
       });
+    }
+
+    /**
+     * Handle unlimited undo button press
+     */
+    handleUndo() {
+      if (this.isProcessingTurn || this.isGameOver || this.isPaused) {
+        return;
+      }
+
+      if (!this.turnManager) {
+        return;
+      }
+
+      // Check undo availability and provide specific message
+      if (this.turnManager.undosUsed >= this.turnManager.maxUndos) {
+        console.log('GameScene: Undo limit reached');
+        this.showMessage(`Undo limit reached! (${this.turnManager.maxUndos} max)`, '#ff0000');
+        return;
+      }
+
+      if (!this.turnManager.canUndo()) {
+        console.log('GameScene: No moves to undo');
+        this.showMessage('Nothing to undo!', '#ff0000');
+        return;
+      }
+
+      console.log('GameScene: Undoing last move');
+
+      // Perform undo
+      const success = this.turnManager.undoLastMove(this.player, this.grid, this.gameState, this);
+
+      if (success) {
+        // Refresh tile renderer
+        if (this.tileRenderer) {
+          this.tileRenderer.refreshGrid();
+        }
+
+        // Refresh enemy sprites
+        this.refreshEnemySprites();
+
+        // Update HUD
+        this.updateHUD();
+
+        // Show feedback
+        this.showMessage('Move undone!', '#00ffff');
+
+        console.log('GameScene: Undo successful');
+      } else {
+        console.log('GameScene: Undo failed');
+        this.showMessage('Cannot undo!', '#ff0000');
+      }
+    }
+
+    /**
+     * Show hint overlay for current level
+     */
+    showHint() {
+      if (this.isGameOver) {
+        return;
+      }
+
+      // Check if hint already used
+      if (this.turnManager && this.turnManager.hintUsed) {
+        console.log('GameScene: Hint already used for this level');
+        this.showMessage('Hint already used!', '#ffaa00');
+        return;
+      }
+
+      // Check if level has a hint
+      if (!this.currentLevelData || !this.currentLevelData.hint) {
+        console.log('GameScene: No hint available for this level');
+        this.showMessage('No hint available!', '#ffaa00');
+        return;
+      }
+
+      // Mark hint as used (reduces undo limit to 3)
+      if (this.turnManager) {
+        this.turnManager.markHintUsed();
+        this.updateHUD(); // Update HUD to reflect new undo limit
+      }
+
+      console.log('GameScene: Showing hint');
+
+      const width = this.cameras.main.width;
+      const height = this.cameras.main.height;
+
+      // Create hint overlay container
+      const hintOverlay = this.add.container(0, 0);
+      hintOverlay.setDepth(2000);
+      hintOverlay.setScrollFactor(0);
+
+      // Semi-transparent background
+      const overlay = this.add.rectangle(0, 0, width, height, 0x000000, 0.8);
+      overlay.setOrigin(0, 0);
+      hintOverlay.add(overlay);
+
+      // Hint panel
+      const panelWidth = 500;
+      const panelHeight = 300;
+      const panelX = width / 2;
+      const panelY = height / 2;
+
+      const panelBg = this.add.rectangle(panelX, panelY, panelWidth, panelHeight, 0x222222);
+      panelBg.setStrokeStyle(4, 0xffaa00);
+      hintOverlay.add(panelBg);
+
+      // Title
+      const title = this.add.text(panelX, panelY - 120, '💡 HINT', {
+        font: 'bold 32px monospace',
+        fill: '#ffaa00',
+        stroke: '#000000',
+        strokeThickness: 4
+      });
+      title.setOrigin(0.5);
+      hintOverlay.add(title);
+
+      // Hint text
+      const hintText = this.add.text(panelX, panelY - 40, this.currentLevelData.hint, {
+        font: '16px monospace',
+        fill: '#ffffff',
+        stroke: '#000000',
+        strokeThickness: 2,
+        align: 'center',
+        wordWrap: { width: panelWidth - 40 }
+      });
+      hintText.setOrigin(0.5, 0);
+      hintOverlay.add(hintText);
+
+      // Close button
+      const closeButton = this.add.text(panelX, panelY + 100, 'Press any key to close', {
+        font: '18px monospace',
+        fill: '#888888',
+        stroke: '#000000',
+        strokeThickness: 2
+      });
+      closeButton.setOrigin(0.5);
+      hintOverlay.add(closeButton);
+
+      // Close on any key press
+      const closeHandler = () => {
+        hintOverlay.destroy();
+        this.input.keyboard.off('keydown', closeHandler);
+      };
+      this.input.keyboard.once('keydown', closeHandler);
+
+      // Close on click
+      overlay.setInteractive();
+      overlay.once('pointerdown', () => {
+        hintOverlay.destroy();
+        this.input.keyboard.off('keydown', closeHandler);
+      });
+    }
+
+    /**
+     * Show solution confirmation dialog
+     */
+    showSolutionConfirm() {
+      if (this.isGameOver || this.isPlayingSolution) {
+        return;
+      }
+
+      // Check if level has been completed before
+      const hasCompletedLevel = this.hasCompletedLevel();
+      
+      if (!hasCompletedLevel) {
+        console.log('GameScene: Solution not available - level not completed yet');
+        this.showMessage('Solution not available!\nComplete level first.', '#ffaa00');
+        return;
+      }
+
+      console.log('GameScene: Showing solution confirmation');
+
+      const width = this.cameras.main.width;
+      const height = this.cameras.main.height;
+
+      // Create confirmation overlay container
+      const confirmOverlay = this.add.container(0, 0);
+      confirmOverlay.setDepth(2000);
+      confirmOverlay.setScrollFactor(0);
+
+      // Semi-transparent background
+      const overlay = this.add.rectangle(0, 0, width, height, 0x000000, 0.8);
+      overlay.setOrigin(0, 0);
+      confirmOverlay.add(overlay);
+
+      // Confirmation panel
+      const panelWidth = 400;
+      const panelHeight = 200;
+      const panelX = width / 2;
+      const panelY = height / 2;
+
+      const panelBg = this.add.rectangle(panelX, panelY, panelWidth, panelHeight, 0x222222);
+      panelBg.setStrokeStyle(4, 0x00ff00);
+      confirmOverlay.add(panelBg);
+
+      // Title
+      const title = this.add.text(panelX, panelY - 75, '🎯 SHOW SOLUTION?', {
+        font: 'bold 24px monospace',
+        fill: '#00ff00',
+        stroke: '#000000',
+        strokeThickness: 4
+      });
+      title.setOrigin(0.5);
+      confirmOverlay.add(title);
+
+      // Warning text
+      const warningText = this.add.text(panelX, panelY - 55, 
+        'This will automatically play\nthe solution for this level.\n\nAre you sure?', {
+        font: '14px monospace',
+        fill: '#ffffff',
+        stroke: '#000000',
+        strokeThickness: 2,
+        align: 'center',
+        lineSpacing: 5
+      });
+      warningText.setOrigin(0.5, 0);
+      confirmOverlay.add(warningText);
+
+      // Button container for proper spacing
+      const buttonY = panelY + 60;
+      
+      // Yes button
+      const yesButtonBg = this.add.rectangle(panelX - 70, buttonY, 120, 35, UI_STYLES.colors.buttonNormal);
+      yesButtonBg.setStrokeStyle(2, UI_STYLES.colors.border);
+      yesButtonBg.setInteractive({ useHandCursor: true });
+      
+      const yesButtonText = this.add.text(panelX - 70, buttonY, 'Yes [Y]', {
+        font: 'bold 16px monospace',
+        fill: '#ffffff',
+        stroke: '#000000',
+        strokeThickness: 2
+      });
+      yesButtonText.setOrigin(0.5);
+      
+      confirmOverlay.add(yesButtonBg);
+      confirmOverlay.add(yesButtonText);
+      
+      // Yes button hover
+      yesButtonBg.on('pointerover', () => {
+        yesButtonBg.setFillStyle(UI_STYLES.colors.buttonHover);
+        yesButtonText.setColor('#00ff00');
+      });
+      yesButtonBg.on('pointerout', () => {
+        yesButtonBg.setFillStyle(UI_STYLES.colors.buttonNormal);
+        yesButtonText.setColor('#ffffff');
+      });
+      yesButtonBg.on('pointerdown', () => {
+        confirmOverlay.destroy();
+        this.playSolution();
+      });
+
+      // No button
+      const noButtonBg = this.add.rectangle(panelX + 70, buttonY, 120, 35, UI_STYLES.colors.buttonNormal);
+      noButtonBg.setStrokeStyle(2, UI_STYLES.colors.border);
+      noButtonBg.setInteractive({ useHandCursor: true });
+      
+      const noButtonText = this.add.text(panelX + 70, buttonY, 'No [N]', {
+        font: 'bold 16px monospace',
+        fill: '#ffffff',
+        stroke: '#000000',
+        strokeThickness: 2
+      });
+      noButtonText.setOrigin(0.5);
+      
+      confirmOverlay.add(noButtonBg);
+      confirmOverlay.add(noButtonText);
+      
+      // No button hover
+      noButtonBg.on('pointerover', () => {
+        noButtonBg.setFillStyle(UI_STYLES.colors.buttonHover);
+        noButtonText.setColor('#ff0000');
+      });
+      noButtonBg.on('pointerout', () => {
+        noButtonBg.setFillStyle(UI_STYLES.colors.buttonNormal);
+        noButtonText.setColor('#ffffff');
+      });
+      noButtonBg.on('pointerdown', () => {
+        confirmOverlay.destroy();
+      });
+
+      // Handle keyboard input
+      const yesHandler = (event) => {
+        if (event.key === 'y' || event.key === 'Y') {
+          confirmOverlay.destroy();
+          this.input.keyboard.off('keydown', yesHandler);
+          this.input.keyboard.off('keydown', noHandler);
+          this.playSolution();
+        }
+      };
+
+      const noHandler = (event) => {
+        if (event.key === 'n' || event.key === 'N' || event.key === 'Escape') {
+          confirmOverlay.destroy();
+          this.input.keyboard.off('keydown', yesHandler);
+          this.input.keyboard.off('keydown', noHandler);
+        }
+      };
+
+      this.input.keyboard.on('keydown', yesHandler);
+      this.input.keyboard.on('keydown', noHandler);
+
+      // Close on background click
+      overlay.setInteractive();
+      overlay.once('pointerdown', () => {
+        confirmOverlay.destroy();
+        this.input.keyboard.off('keydown', yesHandler);
+        this.input.keyboard.off('keydown', noHandler);
+      });
+    }
+
+    /**
+     * Play the solution automatically using live pathfinding
+     */
+    async playSolution() {
+      try {
+        console.log('GameScene: Playing solution');
+
+        this.isPlayingSolution = true;
+
+        // Disable input during solution playback
+        if (this.inputManager) {
+          this.inputManager.disable();
+        }
+
+        // Create solution indicator overlay
+        const solutionIndicator = this.createSolutionIndicator();
+
+        // Get saved solution from localStorage
+        let completeSolution = [];
+        
+        try {
+          const saved = localStorage.getItem('dungeonShiftProgress');
+          if (saved) {
+            const progress = JSON.parse(saved);
+            const levelKey = `level${this.levelId}`;
+            if (progress.solutions && progress.solutions[levelKey]) {
+              completeSolution = progress.solutions[levelKey].moves;
+              console.log(`GameScene: Using saved solution with ${completeSolution.length} moves`);
+            }
+          }
+        } catch (e) {
+          console.error('GameScene: Error loading saved solution', e);
+        }
+
+        // Fallback to live pathfinding if no saved solution
+        if (completeSolution.length === 0) {
+          console.log('GameScene: No saved solution, computing with live pathfinding...');
+          
+          // Defensive checks
+          if (!this.player) {
+            console.error('GameScene: Player is null!');
+            throw new Error('Player is null');
+          }
+          if (!this.grid) {
+            console.error('GameScene: Grid is null!');
+            throw new Error('Grid is null');
+          }
+          if (!this.gameState) {
+            console.error('GameScene: GameState is null!');
+            throw new Error('GameState is null');
+          }
+          if (!this.gameState.chunkManager) {
+            console.error('GameScene: ChunkManager is null!');
+            throw new Error('ChunkManager is null');
+          }
+          if (!this.currentLevelData) {
+            console.error('GameScene: CurrentLevelData is null!');
+            throw new Error('CurrentLevelData is null');
+          }
+          
+          completeSolution = LiveSolutionFinder.findCompleteSolution(
+            this.player,
+            this.grid,
+            this.gameState,
+            this.gameState.chunkManager,
+            this.currentLevelData,
+            50
+          );
+        }
+
+        if (completeSolution.length === 0) {
+          console.log('GameScene: No solution found!');
+          this.showMessage('No solution found - level may be unsolvable from current state', '#ff0000');
+          
+          // Clean up
+          if (solutionIndicator) {
+            solutionIndicator.destroy();
+          }
+          if (this.inputManager && !this.isGameOver) {
+            this.inputManager.enable();
+          }
+          this.isPlayingSolution = false;
+          return;
+        }
+
+        console.log(`GameScene: Solution found with ${completeSolution.length} moves: [${completeSolution.join(', ')}]`);
+
+        // Play back the solution move by move
+        for (let i = 0; i < completeSolution.length; i++) {
+          const move = completeSolution[i];
+          
+          // Update indicator
+          this.updateSolutionIndicator(solutionIndicator, i + 1, completeSolution.length, move);
+
+          // Wait before move
+          await this.delay(700);
+
+          // Check if game is over
+          if (this.isGameOver) {
+            console.log('GameScene: Game over during solution playback');
+            break;
+          }
+
+          // Execute move
+          console.log(`GameScene: Executing solution move ${i + 1}/${completeSolution.length}: ${move}`);
+          try {
+            await this.handlePlayerMove(move);
+          } catch (error) {
+            console.error('GameScene: Error during solution move:', error);
+            break;
+          }
+
+          // Extra delay after move
+          await this.delay(100);
+
+          // Check if we won
+          if (this.isGameOver) {
+            console.log('GameScene: Game ended during solution playback');
+            break;
+          }
+        }
+
+        // Clean up indicator
+        if (solutionIndicator) {
+          this.tweens.add({
+            targets: solutionIndicator,
+            alpha: 0,
+            duration: 300,
+            onComplete: () => solutionIndicator.destroy()
+          });
+        }
+
+        // Re-enable input
+        if (this.inputManager && !this.isGameOver) {
+          this.inputManager.enable();
+        }
+
+        this.isPlayingSolution = false;
+
+        if (!this.isGameOver) {
+          this.showMessage('Solution playback complete - check if level is solved!', '#ffaa00');
+        }
+
+        console.log('GameScene: Solution playback finished');
+      } catch (error) {
+        console.error('GameScene: CRITICAL ERROR in playSolution:', error);
+        console.error('Stack trace:', error.stack);
+        
+        // Try to recover
+        this.isPlayingSolution = false;
+        if (this.inputManager && !this.isGameOver) {
+          this.inputManager.enable();
+        }
+        
+        this.showMessage('Error playing solution: ' + error.message, '#ff0000');
+      }
+    }
+
+    /**
+     * Create solution indicator overlay
+     * @returns {Phaser.GameObjects.Container} Solution indicator container
+     */
+    createSolutionIndicator() {
+      const width = this.cameras.main.width;
+      const height = this.cameras.main.height;
+
+      // Position in bottom-right area, below shift indicator
+      const container = this.add.container(width - 160, height - 180);
+      container.setDepth(1500);
+      container.setScrollFactor(0);
+
+      // Background panel
+      const bg = this.add.rectangle(0, 0, 150, 100, 0x000000, 0.8);
+      bg.setOrigin(0, 0);
+      container.add(bg);
+
+      // Border
+      const border = this.add.rectangle(0, 0, 150, 100);
+      border.setOrigin(0, 0);
+      border.setStrokeStyle(3, 0x00ff00);
+      container.add(border);
+
+      // Title
+      const title = this.add.text(75, 10, 'SOLUTION', {
+        font: 'bold 14px monospace',
+        fill: '#00ff00',
+        stroke: '#000000',
+        strokeThickness: 2
+      });
+      title.setOrigin(0.5, 0);
+      container.add(title);
+
+      // Move counter text
+      const moveText = this.add.text(75, 35, '', {
+        font: '12px monospace',
+        fill: '#ffffff',
+        stroke: '#000000',
+        strokeThickness: 2
+      });
+      moveText.setOrigin(0.5, 0);
+      moveText.setName('moveText');
+      container.add(moveText);
+
+      // Direction text
+      const directionText = this.add.text(75, 55, '', {
+        font: 'bold 16px monospace',
+        fill: '#ffff00',
+        stroke: '#000000',
+        strokeThickness: 2
+      });
+      directionText.setOrigin(0.5, 0);
+      directionText.setName('directionText');
+      container.add(directionText);
+
+      // Direction arrow
+      const arrowText = this.add.text(75, 75, '', {
+        font: 'bold 20px monospace',
+        fill: '#ffff00',
+        stroke: '#000000',
+        strokeThickness: 2
+      });
+      arrowText.setOrigin(0.5, 0);
+      arrowText.setName('arrowText');
+      container.add(arrowText);
+
+      return container;
+    }
+
+    /**
+     * Update solution indicator with current move
+     * @param {Phaser.GameObjects.Container} indicator - Solution indicator container
+     * @param {number} currentMove - Current move number
+     * @param {number} totalMoves - Total number of moves
+     * @param {string} direction - Direction being moved
+     */
+    updateSolutionIndicator(indicator, currentMove, totalMoves, direction) {
+      if (!indicator) return;
+
+      // Update move counter
+      const moveText = indicator.getByName('moveText');
+      if (moveText) {
+        moveText.setText(`Move ${currentMove}/${totalMoves}`);
+      }
+
+      // Update direction text
+      const directionText = indicator.getByName('directionText');
+      if (directionText) {
+        directionText.setText(direction);
+      }
+
+      // Update arrow
+      const arrowText = indicator.getByName('arrowText');
+      if (arrowText) {
+        const arrows = {
+          'UP': '↑',
+          'DOWN': '↓',
+          'LEFT': '←',
+          'RIGHT': '→'
+        };
+        arrowText.setText(arrows[direction] || '?');
+      }
+
+      // Pulse animation
+      this.tweens.add({
+        targets: [directionText, arrowText],
+        scale: { from: 1.2, to: 1 },
+        duration: 200,
+        ease: 'Back.easeOut'
+      });
+    }
+
+    /**
+     * Delay helper for solution playback
+     * @param {number} ms - Milliseconds to delay
+     * @returns {Promise} Resolves after delay
+     */
+    delay(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
     }
 
 

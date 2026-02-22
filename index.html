@@ -22,7 +22,16 @@
             body {
                 line-height: 1;
                 font-family: Arial, sans-serif;
-                background-color: #1a1a2e;
+                /* Dungeon-themed dark gradient background */
+                background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 25%, #2a1a1a 50%, #1a1a1a 75%, #0f0f0f 100%);
+                background-size: 400% 400%;
+                animation: dungeonGradient 15s ease infinite;
+            }
+            
+            @keyframes dungeonGradient {
+                0% { background-position: 0% 50%; }
+                50% { background-position: 100% 50%; }
+                100% { background-position: 0% 50%; }
             }
     
             ol, ul {
@@ -38,6 +47,11 @@
             a {
                 text-decoration: none;
                 color: inherit;
+            }
+            
+            /* Prevent page scrolling */
+            body {
+                overflow: hidden;
             }
         </style>
     </head>

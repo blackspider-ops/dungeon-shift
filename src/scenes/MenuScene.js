@@ -36,12 +36,12 @@ export default class MenuScene extends Phaser.Scene {
     const width = this.cameras.main.width;
     const height = this.cameras.main.height;
 
-    // Game title with animation
+    // Game title with animation - scaled up for larger canvas
     const title = this.add.text(width / 2, height / 4, 'DUNGEON SHIFT', {
-      font: 'bold 48px monospace',
+      font: 'bold 64px monospace',
       fill: '#ffff00',
       stroke: '#ff8800',
-      strokeThickness: 6
+      strokeThickness: 8
     });
     title.setOrigin(0.5);
     title.setAlpha(0);
@@ -56,8 +56,8 @@ export default class MenuScene extends Phaser.Scene {
     });
 
     // Subtitle
-    const subtitle = this.add.text(width / 2, height / 4 + 50, 'A Grid-Based Puzzle Dungeon', {
-      font: '16px monospace',
+    const subtitle = this.add.text(width / 2, height / 4 + 70, 'A Grid-Based Puzzle Dungeon', {
+      font: '20px monospace',
       fill: '#cccccc'
     });
     subtitle.setOrigin(0.5);
@@ -72,10 +72,10 @@ export default class MenuScene extends Phaser.Scene {
 
     // Start button
     const startButton = this.add.text(width / 2, height / 2, 'START GAME', {
-      font: 'bold 24px monospace',
+      font: 'bold 32px monospace',
       fill: '#ffffff',
       backgroundColor: '#333333',
-      padding: { x: 30, y: 15 }
+      padding: { x: 40, y: 20 }
     });
     startButton.setOrigin(0.5);
     startButton.setInteractive({ useHandCursor: true });
@@ -103,11 +103,11 @@ export default class MenuScene extends Phaser.Scene {
     });
 
     // Level select button
-    const levelSelectButton = this.add.text(width / 2, height / 2 + 60, 'LEVEL SELECT', {
-      font: 'bold 20px monospace',
+    const levelSelectButton = this.add.text(width / 2, height / 2 + 80, 'LEVEL SELECT', {
+      font: 'bold 26px monospace',
       fill: '#aaaaaa',
       backgroundColor: '#222222',
-      padding: { x: 25, y: 12 }
+      padding: { x: 35, y: 16 }
     });
     levelSelectButton.setOrigin(0.5);
     levelSelectButton.setInteractive({ useHandCursor: true });
@@ -134,9 +134,42 @@ export default class MenuScene extends Phaser.Scene {
       this.showLevelSelect();
     });
 
+    // Tutorial button
+    const tutorialButton = this.add.text(width / 2, height / 2 + 160, 'TUTORIAL', {
+      font: 'bold 22px monospace',
+      fill: '#888888',
+      backgroundColor: '#1a1a1a',
+      padding: { x: 30, y: 14 }
+    });
+    tutorialButton.setOrigin(0.5);
+    tutorialButton.setInteractive({ useHandCursor: true });
+    tutorialButton.setAlpha(0);
+
+    this.tweens.add({
+      targets: tutorialButton,
+      alpha: 1,
+      duration: 600,
+      delay: 1100
+    });
+
+    // Button hover effect
+    tutorialButton.on('pointerover', () => {
+      tutorialButton.setStyle({ fill: '#ffaa00', backgroundColor: '#2a2a2a' });
+    });
+
+    tutorialButton.on('pointerout', () => {
+      tutorialButton.setStyle({ fill: '#888888', backgroundColor: '#1a1a1a' });
+    });
+
+    // Button click - start tutorial
+    tutorialButton.on('pointerdown', () => {
+      console.log('MenuScene: Tutorial button clicked - starting level 0');
+      this.scene.start('GameScene', { levelId: 0 });
+    });
+
     // Instructions
-    const instructions = this.add.text(width / 2, height - 80, 'Arrow Keys or WASD to Move', {
-      font: '14px monospace',
+    const instructions = this.add.text(width / 2, height - 100, 'Arrow Keys or WASD to Move', {
+      font: '18px monospace',
       fill: '#888888'
     });
     instructions.setOrigin(0.5);
@@ -150,8 +183,8 @@ export default class MenuScene extends Phaser.Scene {
     });
 
     // Credits
-    const credits = this.add.text(width / 2, height - 50, 'Collect keys, avoid traps, reach the exit!', {
-      font: '14px monospace',
+    const credits = this.add.text(width / 2, height - 65, 'Collect keys, avoid traps, reach the exit!', {
+      font: '18px monospace',
       fill: '#888888'
     });
     credits.setOrigin(0.5);
@@ -205,11 +238,33 @@ export default class MenuScene extends Phaser.Scene {
 
   /**
    * Starts the game by transitioning to the Game scene
-   * Loads level 1 by default
+   * Starts with tutorial (level 0) for new players, or level 1 if tutorial completed
    */
   startGame() {
-    console.log('MenuScene: Starting game');
-    this.scene.start('GameScene', { levelId: 1 });
+    // Check if player has completed tutorial
+    const hasCompletedTutorial = this.hasCompletedTutorial();
+    const startLevel = hasCompletedTutorial ? 1 : 0;
+    
+    console.log(`MenuScene: Starting game at level ${startLevel} (tutorial ${hasCompletedTutorial ? 'completed' : 'not completed'})`);
+    this.scene.start('GameScene', { levelId: startLevel });
+  }
+
+  /**
+   * Check if player has completed the tutorial
+   * @returns {boolean} True if tutorial has been completed
+   */
+  hasCompletedTutorial() {
+    try {
+      const saved = localStorage.getItem('dungeonShiftProgress');
+      if (saved) {
+        const progress = JSON.parse(saved);
+        // If player has unlocked level 2 or higher, they've completed tutorial and level 1
+        return progress.maxLevel >= 2;
+      }
+    } catch (e) {
+      console.error('MenuScene: Error checking tutorial completion', e);
+    }
+    return false;
   }
 
   /**
@@ -222,26 +277,26 @@ export default class MenuScene extends Phaser.Scene {
     const width = this.cameras.main.width;
     const height = this.cameras.main.height;
 
-    // Title
-    const title = this.add.text(width / 2, 60, 'SELECT LEVEL', {
-      font: 'bold 32px monospace',
+    // Title - scaled up
+    const title = this.add.text(width / 2, 80, 'SELECT LEVEL', {
+      font: 'bold 48px monospace',
       fill: '#ffff00',
       stroke: '#ff8800',
-      strokeThickness: 4
+      strokeThickness: 6
     });
     title.setOrigin(0.5);
 
     // Get level progress from localStorage
     const maxLevel = this.getMaxUnlockedLevel();
 
-    // Create level buttons in a grid (2 columns, 5 rows for 10 levels)
+    // Create level buttons in a grid (2 columns, 5 rows for 10 levels) - adjusted for better fit
     const cols = 2;
     const rows = 5;
-    const buttonWidth = 120;
-    const buttonHeight = 60;
-    const spacing = 20;
+    const buttonWidth = 160;
+    const buttonHeight = 70;
+    const spacing = 25;
     const startX = width / 2 - (cols * buttonWidth + (cols - 1) * spacing) / 2;
-    const startY = 120;
+    const startY = 150;
 
     for (let i = 1; i <= 10; i++) {
       const col = (i - 1) % cols;
@@ -254,10 +309,10 @@ export default class MenuScene extends Phaser.Scene {
       const textColor = isUnlocked ? '#ffffff' : '#555555';
 
       const levelButton = this.add.text(x, y, `LEVEL ${i}`, {
-        font: 'bold 18px monospace',
+        font: 'bold 24px monospace',
         fill: textColor,
         backgroundColor: buttonColor,
-        padding: { x: 20, y: 15 }
+        padding: { x: 30, y: 20 }
       });
       levelButton.setOrigin(0.5);
 
@@ -278,12 +333,12 @@ export default class MenuScene extends Phaser.Scene {
       }
     }
 
-    // Back button
+    // Back button - positioned at bottom with more margin
     const backButton = this.add.text(width / 2, height - 60, 'BACK TO MENU', {
-      font: 'bold 18px monospace',
+      font: 'bold 24px monospace',
       fill: '#aaaaaa',
       backgroundColor: '#222222',
-      padding: { x: 20, y: 10 }
+      padding: { x: 30, y: 15 }
     });
     backButton.setOrigin(0.5);
     backButton.setInteractive({ useHandCursor: true });

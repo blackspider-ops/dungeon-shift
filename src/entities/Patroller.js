@@ -29,15 +29,18 @@ export default class Patroller {
     // Get screen position from tile renderer
     const pos = scene.tileRenderer.getScreenPosition(gridX, gridY);
     
+    // Get dynamic scale from tile renderer (defaults to 2 if not available)
+    const spriteScale = scene.tileRenderer.tileScale || 2;
+    
     this.sprite = scene.add.sprite(pos.x, pos.y, 'patroller', 0);
     this.sprite.setOrigin(0.5, 0.5);
-    this.sprite.setScale(2); // Scale up to match player size
+    this.sprite.setScale(spriteScale); // Scale dynamically to match tile size
     // Depth will be set dynamically in GameScene.updateSpriteDepths()
     
     // Set initial animation
     this.sprite.play('patroller_idle');
     
-    console.log(`Patroller: Created at grid position (${gridX}, ${gridY}) with patrol path of ${patrolPath.length} points`);
+    console.log(`Patroller: Created at grid position (${gridX}, ${gridY}) with patrol path of ${patrolPath.length} points, scale ${spriteScale}`);
   }
   
   /**

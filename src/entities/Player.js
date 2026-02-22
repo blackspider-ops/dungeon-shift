@@ -23,14 +23,18 @@ export default class Player {
     // Get screen position from tile renderer
     const pos = scene.tileRenderer.getScreenPosition(gridX, gridY);
     
+    // Get dynamic scale from tile renderer (defaults to 2 if not available)
+    const spriteScale = scene.tileRenderer.tileScale || 2;
+    
     this.sprite = scene.add.sprite(pos.x, pos.y, 'player', 0);
-    this.sprite.setOrigin(0.5, 0.5);
-    this.sprite.setScale(2);
+    // Set origin to (0.5, 0.75) so sprite bottom aligns properly with tile
+    this.sprite.setOrigin(0.5, 0.75);
+    this.sprite.setScale(spriteScale);
     
     // Set initial animation
     this.sprite.play('player_idle_down');
     
-    console.log(`Player: Created at grid (${gridX}, ${gridY}), screen (${pos.x}, ${pos.y})`);
+    console.log(`Player: Created at grid (${gridX}, ${gridY}), screen (${pos.x}, ${pos.y}), scale ${spriteScale}`);
   }
   
   /**

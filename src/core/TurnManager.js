@@ -43,7 +43,14 @@ export class TurnManager {
       this.turnNumber = 0;
       this.collapseMeter = initialCollapseMeter;
       this.initialCollapseMeter = initialCollapseMeter;
-      this.savedState = null; // For undo functionality
+      this.savedState = null; // For undo functionality (power-up)
+      this.stateHistory = []; // For unlimited undo functionality
+      this.maxHistorySize = 50; // Limit history to prevent memory issues
+      
+      // Undo limits per level
+      this.maxUndos = 5; // Default: 5 undos per level
+      this.undosUsed = 0;
+      this.hintUsed = false; // Track if hint was used this level
 
       console.log(`TurnManager: Initialized with ${initialCollapseMeter} moves`);
     }
@@ -958,6 +965,7 @@ export class TurnManager {
   /**
    * Save current game state for undo functionality
    * Creates a deep copy of all relevant game state
+   * Saves to both savedState (for power-up) and stateHistory (for unlimited undo)
    * @param {Object} player - Player entity
    * @param {Object} grid - Game grid
    * @param {Object} gameState - Current game state
@@ -965,7 +973,7 @@ export class TurnManager {
   saveState(player, grid, gameState) {
     console.log('TurnManager: Saving game state for undo');
 
-    this.savedState = {
+    const state = {
       // Turn manager state
       turnNumber: this.turnNumber,
       collapseMeter: this.collapseMeter,
@@ -1002,7 +1010,18 @@ export class TurnManager {
       }
     };
 
-    console.log('TurnManager: Game state saved successfully');
+    // Save for power-up undo (single use)
+    this.savedState = state;
+
+    // Save to history for unlimited undo
+    this.stateHistory.push(state);
+
+    // Limit history size to prevent memory issues
+    if (this.stateHistory.length > this.maxHistorySize) {
+      this.stateHistory.shift(); // Remove oldest state
+    }
+
+    console.log(`TurnManager: Game state saved successfully (history size: ${this.stateHistory.length})`);
   }
 
   /**
@@ -1170,7 +1189,112 @@ export class TurnManager {
     }
   }
 
+  /**
+   * Undo the last move (unlimited undo from history)
+   * @param {Object} player - Player entity to restore
+   * @param {Object} grid - Game grid to restore
+   * @param {Object} gameState - Game state to restore
+   * @param {Object} scene - Game scene for rendering updates
+   * @returns {boolean} True if undo was successful
+   */
+  undoLastMove(player, grid, gameState, scene) {
+    // Check if undo limit reached
+    if (this.undosUsed >= this.maxUndos) {
+      console.log(`TurnManager: Undo limit reached (${this.maxUndos} max)`);
+      return false;
+    }
+    
+    // Need at least 2 states in history to undo (initial + at least one move)
+    if (this.stateHistory.length < 2) {
+      console.log('TurnManager: No moves to undo');
+      return false;
+    }
 
+    // Remove the current state
+    this.stateHistory.pop();
 
+    // Get the previous state (now the last one in history)
+    const previousState = this.stateHistory[this.stateHistory.length - 1];
 
+    console.log('TurnManager: Undoing last move');
+    
+    // Increment undo counter
+    this.undosUsed++;
+
+    // Restore turn manager state
+    this.turnNumber = previousState.turnNumber;
+    this.collapseMeter = previousState.collapseMeter;
+
+    // Restore player state
+    player.gridX = previousState.player.gridX;
+    player.gridY = previousState.player.gridY;
+    player.hp = previousState.player.hp;
+    player.keysCollected = previousState.player.keysCollected;
+    player.inventory = [...previousState.player.inventory];
+    player.activeShield = previousState.player.activeShield;
+    player.phaseStepActive = previousState.player.phaseStepActive;
+    player.facing = previousState.player.facing;
+
+    // Update player sprite position
+    if (player.sprite && scene.tileRenderer) {
+      const pos = scene.tileRenderer.getScreenPosition(player.gridX, player.gridY);
+      player.sprite.setPosition(pos.x, pos.y);
+    }
+
+    // Restore grid state
+    this.restoreGridTiles(grid, previousState.grid.tiles);
+
+    // Restore game state
+    gameState.keysRequired = previousState.gameState.keysRequired;
+    gameState.exitUnlocked = previousState.gameState.exitUnlocked;
+    gameState.items = [...previousState.gameState.items];
+
+    // Restore shift system index
+    if (gameState.shiftSystem && gameState.shiftSystem.pattern && 
+        previousState.gameState.shiftSystemIndex !== undefined) {
+      gameState.shiftSystem.pattern.currentIndex = previousState.gameState.shiftSystemIndex;
+    }
+
+    // Restore enemies
+    this.restoreEnemies(gameState.enemies, previousState.gameState.enemies);
+
+    console.log(`TurnManager: Undo successful (${this.undosUsed}/${this.maxUndos} undos used, ${this.stateHistory.length} moves in history)`);
+    return true;
+  }
+
+  /**
+   * Check if undo is available
+   * @returns {boolean} True if there are moves to undo
+   */
+  canUndo() {
+    return this.stateHistory.length > 1 && this.undosUsed < this.maxUndos;
+  }
+
+  /**
+   * Get number of moves that can be undone
+   * @returns {number} Number of undoable moves remaining
+   */
+  getUndoCount() {
+    const remaining = this.maxUndos - this.undosUsed;
+    return Math.max(0, remaining);
+  }
+  
+  /**
+   * Mark hint as used and reduce undo limit
+   */
+  markHintUsed() {
+    if (!this.hintUsed) {
+      this.hintUsed = true;
+      this.maxUndos = 3; // Reduce from 5 to 3
+      console.log('TurnManager: Hint used, undo limit reduced to 3');
+    }
+  }
+
+  /**
+   * Clear undo history
+   */
+  clearHistory() {
+    this.stateHistory = [];
+    console.log('TurnManager: Undo history cleared');
+  }
 }

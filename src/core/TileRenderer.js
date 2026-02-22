@@ -96,21 +96,40 @@ export class TileRenderer {
     const canvasWidth = scene.cameras.main.width;
     const canvasHeight = scene.cameras.main.height;
     
+    // Calculate dynamic scale based on grid size
+    // Smaller grids get larger scale to fill the screen better
+    const availableWidth = canvasWidth - 400; // Leave space for UI (200px each side)
+    const availableHeight = canvasHeight - 250; // Leave space for HUD (80 top, 170 bottom)
+    
+    const maxScaleByWidth = availableWidth / (this.grid.width * 16);
+    const maxScaleByHeight = availableHeight / (this.grid.height * 16);
+    const dynamicScale = Math.min(maxScaleByWidth, maxScaleByHeight, 3); // Cap at 3x
+    const finalScale = Math.max(dynamicScale, 2); // Minimum 2x
+    
+    // Calculate actual tile size with dynamic scale
+    const actualTileSize = 16 * finalScale;
+    
     // Calculate grid dimensions in pixels (at scale)
-    const gridPixelWidth = this.grid.width * TILE_SIZE;
-    const gridPixelHeight = this.grid.height * TILE_SIZE;
+    const gridPixelWidth = this.grid.width * actualTileSize;
+    const gridPixelHeight = this.grid.height * actualTileSize;
     
     // Center the grid with space for HUD
     const hudTop = 80;
-    const offsetX = (canvasWidth - gridPixelWidth) / 2;
-    const offsetY = hudTop + (canvasHeight - hudTop - 100 - gridPixelHeight) / 2;
+    const baseOffsetX = (canvasWidth - gridPixelWidth) / 2;
+    const baseOffsetY = hudTop + (canvasHeight - hudTop - 100 - gridPixelHeight) / 2;
     
-    // Store offset for entity positioning
-    this.offsetX = offsetX;
-    this.offsetY = offsetY;
+    // Store the actual tile size for position calculations
+    this.actualTileSize = actualTileSize;
+    this.tileScale = finalScale;
     
-    console.log(`TileRenderer: Grid ${this.grid.width}x${this.grid.height} = ${gridPixelWidth}x${gridPixelHeight}px`);
-    console.log(`TileRenderer: Canvas ${canvasWidth}x${canvasHeight}, offset (${offsetX}, ${offsetY})`);
+    // CRITICAL: Tilemap tiles render from top-left, but entities position at center
+    // So we DON'T offset the layer - we keep it at the base position
+    // And entities will naturally be centered within their tiles
+    this.offsetX = baseOffsetX;
+    this.offsetY = baseOffsetY;
+    
+    console.log(`TileRenderer: Grid ${this.grid.width}x${this.grid.height}, scale ${finalScale}x = ${gridPixelWidth}x${gridPixelHeight}px`);
+    console.log(`TileRenderer: Canvas ${canvasWidth}x${canvasHeight}, offset (${baseOffsetX}, ${baseOffsetY})`);
 
     // Create a blank tilemap
     this.tilemap = this.scene.make.tilemap({
@@ -124,10 +143,13 @@ export class TileRenderer {
     const tileset = this.tilemap.addTilesetImage('environment_tileset', 'environment_tileset', 16, 16);
 
     // Create a layer for the tiles at centered position
-    this.layer = this.tilemap.createBlankLayer('ground', tileset, offsetX, offsetY);
+    // Layer position is the top-left of the tilemap
+    this.layer = this.tilemap.createBlankLayer('ground', tileset, this.offsetX, this.offsetY);
     
-    // Scale up the tiles to match TILE_SIZE
-    this.layer.setScale(TILE_SIZE / 16);
+    // Scale up the tiles using dynamic scale
+    this.layer.setScale(finalScale);
+    
+    console.log(`TileRenderer: Layer created at (${this.offsetX}, ${this.offsetY}) with scale ${finalScale}`);
     
     // Set depth to 0 so it renders below entities
     // Entities will have dynamic depth (10 + gridY) so they render properly
@@ -136,38 +158,44 @@ export class TileRenderer {
     // Render all tiles from the grid
     this.renderGrid();
 
-    console.log(`TileRenderer: Tilemap created at (${offsetX}, ${offsetY}) with scale ${TILE_SIZE / 16}`);
+    console.log(`TileRenderer: Tilemap created at (${this.offsetX}, ${this.offsetY}) with scale ${finalScale}`);
   }
   
   /**
    * Get the screen position for a grid coordinate
-   * Uses the EXACT same calculation as the grid offset
+   * Returns the CENTER of the tile for proper sprite positioning
+   * MUST match exactly how the tilemap layer renders tiles
    * @param {number} gridX - Grid X coordinate
    * @param {number} gridY - Grid Y coordinate
-   * @returns {{x: number, y: number}} Screen position
+   * @returns {{x: number, y: number}} Screen position (center of tile)
    */
   getScreenPosition(gridX, gridY) {
+    // Use actualTileSize if available, otherwise fall back to TILE_SIZE
+    const tileSize = this.actualTileSize || TILE_SIZE;
+    
     // Safety check
     if (this.offsetX === undefined || this.offsetY === undefined) {
       console.error('TileRenderer.getScreenPosition: offsets not initialized!');
       // Fallback: calculate on the fly
       const canvasWidth = this.scene.cameras.main.width;
       const canvasHeight = this.scene.cameras.main.height;
-      const gridPixelWidth = this.grid.width * TILE_SIZE;
-      const gridPixelHeight = this.grid.height * TILE_SIZE;
+      const gridPixelWidth = this.grid.width * tileSize;
+      const gridPixelHeight = this.grid.height * tileSize;
       const hudTop = 80;
       this.offsetX = (canvasWidth - gridPixelWidth) / 2;
       this.offsetY = hudTop + (canvasHeight - hudTop - 100 - gridPixelHeight) / 2;
       console.log(`TileRenderer: Calculated fallback offsets: (${this.offsetX}, ${this.offsetY})`);
     }
     
-    // Use the stored offset values that were calculated in create()
-    // These offsets position the grid centered on screen
-    // TILE_SIZE is 32, which is the rendered size of each tile
-    const x = this.offsetX + (gridX * TILE_SIZE) + (TILE_SIZE / 2);
-    const y = this.offsetY + (gridY * TILE_SIZE) + (TILE_SIZE / 2);
+    // CRITICAL: This MUST match how Phaser renders tilemap tiles
+    // Tilemap tile at grid (x,y) renders at: layer.x + (x * tileWidth * scale), layer.y + (y * tileHeight * scale)
+    // Since our tiles are 16px scaled dynamically, and layer is at (offsetX, offsetY):
+    // Tile top-left = offsetX + (gridX * tileSize), offsetY + (gridY * tileSize)
+    // Tile center = tile top-left + (tileSize/2, tileSize/2)
+    const x = this.offsetX + (gridX * tileSize) + (tileSize / 2);
+    const y = this.offsetY + (gridY * tileSize) + (tileSize / 2);
     
-    console.log(`getScreenPosition(${gridX}, ${gridY}) = (${x}, ${y}), offset=(${this.offsetX}, ${this.offsetY}), TILE_SIZE=${TILE_SIZE}`);
+    console.log(`getScreenPosition(${gridX}, ${gridY}) = (${x}, ${y}), offset=(${this.offsetX}, ${this.offsetY}), tileSize=${tileSize}`);
     return { x, y };
   }
 
@@ -213,6 +241,15 @@ export class TileRenderer {
     this.tileCache.set(cacheKey, frameIndex);
 
     // Set the tile in the layer
+    // DEBUG: Log tile placement for key tiles
+    if (tile.type === TileType.EXIT || tile.type === TileType.EXIT_UNLOCKED || tile.type === TileType.KEY) {
+      const tileScreenX = this.layer.x + (x * TILE_SIZE);
+      const tileScreenY = this.layer.y + (y * TILE_SIZE);
+      const tileCenterX = tileScreenX + (TILE_SIZE / 2);
+      const tileCenterY = tileScreenY + (TILE_SIZE / 2);
+      console.log(`TileRenderer: Placing ${tile.type} at grid(${x},${y}) -> tile top-left(${tileScreenX},${tileScreenY}), center(${tileCenterX},${tileCenterY}) [layer at (${this.layer.x},${this.layer.y})]`);
+    }
+    
     this.layer.putTileAt(frameIndex, x, y);
 
     // Set collision for walls
