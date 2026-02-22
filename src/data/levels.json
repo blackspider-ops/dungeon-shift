@@ -183,94 +183,19 @@
         "y": 6
       },
       "tiles": [
-        [
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL"
-        ]
+        ["WALL", "WALL", "WALL", "WALL", "WALL", "WALL", "WALL", "WALL"],
+        ["WALL", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "WALL"],
+        ["WALL", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "WALL"],
+        ["WALL", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "WALL"],
+        ["WALL", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "WALL"],
+        ["WALL", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "WALL"],
+        ["WALL", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "WALL"],
+        ["WALL", "WALL", "WALL", "WALL", "WALL", "WALL", "WALL", "WALL"]
       ],
       "items": [
         {
           "type": "KEY",
-          "position": {
-            "x": 3,
-            "y": 3
-          }
+          "position": { "x": 3, "y": 3 }
         }
       ],
       "enemies": [],
@@ -278,14 +203,8 @@
       "shiftPattern": {
         "type": "ROOM_SWAP",
         "sequence": [
-          {
-            "chunkA": 0,
-            "chunkB": 3
-          },
-          {
-            "chunkA": 1,
-            "chunkB": 2
-          }
+          { "chunkA": 0, "chunkB": 3 },
+          { "chunkA": 1, "chunkB": 2 }
         ]
       },
       "tutorial": "Welcome! Use arrow keys or WASD to move. Collect the key and reach the exit!",
@@ -294,10 +213,10 @@
     },
     {
       "id": 2,
-      "name": "Shifting Rooms",
+      "name": "Shifting Maze",
       "gridWidth": 8,
       "gridHeight": 8,
-      "collapseMeter": 28,
+      "collapseMeter": 25,
       "keysRequired": 1,
       "playerStart": {
         "x": 1,
@@ -308,131 +227,177 @@
         "y": 6
       },
       "tiles": [
-        [
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "WALL",
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "WALL",
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "WALL",
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "WALL",
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL"
-        ]
+        ["WALL", "WALL", "WALL", "WALL", "WALL", "WALL", "WALL", "WALL"],
+        ["WALL", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "WALL"],
+        ["WALL", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "WALL"],
+        ["WALL", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "WALL"],
+        ["WALL", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "WALL"],
+        ["WALL", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "WALL"],
+        ["WALL", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "WALL"],
+        ["WALL", "WALL", "WALL", "WALL", "WALL", "WALL", "WALL", "WALL"]
       ],
       "items": [
         {
           "type": "KEY",
-          "position": {
-            "x": 6,
-            "y": 1
-          }
+          "position": { "x": 5, "y": 2 }
         }
       ],
-      "enemies": [],
+      "enemies": [
+        {
+          "type": "PATROLLER",
+          "position": { "x": 3, "y": 4 },
+          "patrolPath": [
+            { "x": 3, "y": 4 },
+            { "x": 4, "y": 4 },
+            { "x": 4, "y": 5 },
+            { "x": 3, "y": 5 }
+          ]
+        }
+      ],
       "traps": [],
       "shiftPattern": {
         "type": "ROOM_SWAP",
         "sequence": [
-          {
-            "chunkA": 0,
-            "chunkB": 3
-          },
-          {
-            "chunkA": 1,
-            "chunkB": 2
-          }
+          { "chunkA": 0, "chunkB": 3 },
+          { "chunkA": 1, "chunkB": 2 }
         ]
       },
-      "tutorial": "The dungeon shifts after each move! Watch the shift indicator to plan your route.",
-      "hint": "Watch the 'Next Shift' indicator in the top-right. It shows which rooms will swap. Time your movements so you end up in the correct room after the shift. Use Undo (U key) to try different approaches!",
-      "solution": [
-        "DOWN",
-        "UP",
-        "DOWN",
-        "UP",
-        "DOWN",
-        "UP",
-        "RIGHT",
-        "DOWN",
-        "UP",
-        "DOWN"
-      ]
+      "tutorial": "Navigate the open floor while avoiding the patroller!",
+      "hint": "Watch the patroller's movement pattern and time your moves to avoid it. The open floor gives you plenty of room to maneuver."
     },
     {
       "id": 3,
-      "name": "Dangerous Ground",
+      "name": "Spike Gauntlet",
       "gridWidth": 8,
       "gridHeight": 8,
+      "collapseMeter": 22,
+      "keysRequired": 1,
+      "playerStart": {
+        "x": 1,
+        "y": 1
+      },
+      "exitPosition": {
+        "x": 6,
+        "y": 6
+      },
+      "tiles": [
+        ["WALL", "WALL", "WALL", "WALL", "WALL", "WALL", "WALL", "WALL"],
+        ["WALL", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "WALL"],
+        ["WALL", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "WALL"],
+        ["WALL", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "WALL"],
+        ["WALL", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "WALL"],
+        ["WALL", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "WALL"],
+        ["WALL", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "WALL"],
+        ["WALL", "WALL", "WALL", "WALL", "WALL", "WALL", "WALL", "WALL"]
+      ],
+      "items": [
+        {
+          "type": "KEY",
+          "position": { "x": 4, "y": 3 }
+        }
+      ],
+      "enemies": [],
+      "traps": [
+        {
+          "type": "SPIKE_TRAP",
+          "position": { "x": 2, "y": 2 }
+        },
+        {
+          "type": "SPIKE_TRAP",
+          "position": { "x": 5, "y": 2 }
+        },
+        {
+          "type": "SPIKE_TRAP",
+          "position": { "x": 3, "y": 4 }
+        },
+        {
+          "type": "SPIKE_TRAP",
+          "position": { "x": 5, "y": 5 }
+        }
+      ],
+      "shiftPattern": {
+        "type": "ROOM_SWAP",
+        "sequence": [
+          { "chunkA": 0, "chunkB": 3 },
+          { "chunkA": 1, "chunkB": 2 }
+        ]
+      },
+      "tutorial": "Spike traps scattered across the floor! Navigate carefully to avoid damage.",
+      "hint": "Plan a path that avoids the spike traps. The open floor gives you multiple route options."
+    },
+    {
+      "id": 4,
+      "name": "Double Trouble",
+      "gridWidth": 10,
+      "gridHeight": 10,
+      "collapseMeter": 35,
+      "keysRequired": 2,
+      "playerStart": {
+        "x": 1,
+        "y": 1
+      },
+      "exitPosition": {
+        "x": 8,
+        "y": 8
+      },
+      "tiles": [
+        ["WALL", "WALL", "WALL", "WALL", "WALL", "WALL", "WALL", "WALL", "WALL", "WALL"],
+        ["WALL", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "WALL"],
+        ["WALL", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "WALL"],
+        ["WALL", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "WALL"],
+        ["WALL", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "WALL"],
+        ["WALL", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "WALL"],
+        ["WALL", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "WALL"],
+        ["WALL", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "WALL"],
+        ["WALL", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "WALL"],
+        ["WALL", "WALL", "WALL", "WALL", "WALL", "WALL", "WALL", "WALL", "WALL", "WALL"]
+      ],
+      "items": [
+        {
+          "type": "KEY",
+          "position": { "x": 2, "y": 2 }
+        },
+        {
+          "type": "KEY",
+          "position": { "x": 7, "y": 7 }
+        }
+      ],
+      "enemies": [
+        {
+          "type": "PATROLLER",
+          "position": { "x": 3, "y": 4 },
+          "patrolPath": [
+            { "x": 3, "y": 4 },
+            { "x": 4, "y": 4 },
+            { "x": 4, "y": 5 }
+          ]
+        },
+        {
+          "type": "PATROLLER",
+          "position": { "x": 6, "y": 6 },
+          "patrolPath": [
+            { "x": 6, "y": 6 },
+            { "x": 7, "y": 6 },
+            { "x": 6, "y": 5 }
+          ]
+        }
+      ],
+      "traps": [],
+      "shiftPattern": {
+        "type": "ROOM_SWAP",
+        "sequence": [
+          { "chunkA": 0, "chunkB": 3 },
+          { "chunkA": 1, "chunkB": 2 }
+        ]
+      },
+      "tutorial": "Two keys required! Collect both while avoiding two patrollers in the open space.",
+      "hint": "Plan your route to collect both keys. Watch both patrol patterns and time your movements carefully."
+    },
+    {
+      "id": 5,
+      "name": "The Watcher",
+      "gridWidth": 10,
+      "gridHeight": 10,
       "collapseMeter": 30,
       "keysRequired": 1,
       "playerStart": {
@@ -440,1052 +405,131 @@
         "y": 1
       },
       "exitPosition": {
-        "x": 6,
-        "y": 6
+        "x": 8,
+        "y": 8
       },
       "tiles": [
-        [
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "WALL",
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "WALL",
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "WALL",
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "WALL",
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL"
-        ]
+        ["WALL", "WALL", "WALL", "WALL", "WALL", "WALL", "WALL", "WALL", "WALL", "WALL"],
+        ["WALL", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "WALL"],
+        ["WALL", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "WALL"],
+        ["WALL", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "WALL"],
+        ["WALL", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "WALL"],
+        ["WALL", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "WALL"],
+        ["WALL", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "WALL"],
+        ["WALL", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "WALL"],
+        ["WALL", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "WALL"],
+        ["WALL", "WALL", "WALL", "WALL", "WALL", "WALL", "WALL", "WALL", "WALL", "WALL"]
       ],
       "items": [
         {
           "type": "KEY",
-          "position": {
-            "x": 2,
-            "y": 6
-          }
+          "position": { "x": 6, "y": 3 }
         }
       ],
-      "enemies": [],
+      "enemies": [
+        {
+          "type": "GUARD",
+          "position": { "x": 5, "y": 5 }
+        }
+      ],
       "traps": [
         {
           "type": "SPIKE_TRAP",
-          "position": {
-            "x": 2,
-            "y": 2
-          },
-          "state": {
-            "active": false
-          }
+          "position": { "x": 3, "y": 5 }
         },
         {
           "type": "SPIKE_TRAP",
-          "position": {
-            "x": 5,
-            "y": 5
-          },
-          "state": {
-            "active": false
-          }
+          "position": { "x": 6, "y": 6 }
         }
       ],
       "shiftPattern": {
         "type": "ROOM_SWAP",
         "sequence": [
-          {
-            "chunkA": 0,
-            "chunkB": 3
-          },
-          {
-            "chunkA": 1,
-            "chunkB": 2
-          }
+          { "chunkA": 0, "chunkB": 3 },
+          { "chunkA": 1, "chunkB": 2 }
         ]
       },
-      "tutorial": "Beware of spike traps! They activate when you step on them and deal damage.",
-      "solution": [
-        "DOWN",
-        "UP",
-        "DOWN",
-        "UP",
-        "DOWN",
-        "RIGHT",
-        "UP",
-        "DOWN",
-        "UP",
-        "DOWN"
-      ]
-    },
-    {
-      "id": 4,
-      "name": "Timed Assault",
-      "gridWidth": 12,
-      "gridHeight": 12,
-      "collapseMeter": 38,
-      "keysRequired": 1,
-      "playerStart": {
-        "x": 1,
-        "y": 1
-      },
-      "exitPosition": {
-        "x": 10,
-        "y": 10
-      },
-      "tiles": [
-        [
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL",
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL",
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL",
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL",
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL",
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL",
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL",
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL",
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL"
-        ]
-      ],
-      "items": [
-        {
-          "type": "KEY",
-          "position": {
-            "x": 10,
-            "y": 2
-          }
-        }
-      ],
-      "enemies": [],
-      "traps": [
-        {
-          "type": "ARROW_TRAP",
-          "position": {
-            "x": 3,
-            "y": 3
-          },
-          "state": {
-            "timer": 3,
-            "interval": 3,
-            "direction": "RIGHT"
-          }
-        },
-        {
-          "type": "ARROW_TRAP",
-          "position": {
-            "x": 2,
-            "y": 9
-          },
-          "state": {
-            "timer": 2,
-            "interval": 3,
-            "direction": "RIGHT"
-          }
-        },
-        {
-          "type": "SPIKE_TRAP",
-          "position": {
-            "x": 4,
-            "y": 2
-          },
-          "state": {
-            "active": false
-          }
-        },
-        {
-          "type": "SPIKE_TRAP",
-          "position": {
-            "x": 3,
-            "y": 10
-          },
-          "state": {
-            "active": false
-          }
-        }
-      ],
-      "shiftPattern": {
-        "type": "ROOM_SWAP",
-        "sequence": [
-          {
-            "chunkA": 0,
-            "chunkB": 3
-          },
-          {
-            "chunkA": 1,
-            "chunkB": 2
-          }
-        ]
-      },
-      "tutorial": "Arrow traps fire on a timer! Watch for the warning flash and time your movements carefully."
-    },
-    {
-      "id": 5,
-      "name": "Fragile Path",
-      "gridWidth": 12,
-      "gridHeight": 12,
-      "collapseMeter": 42,
-      "keysRequired": 2,
-      "playerStart": {
-        "x": 1,
-        "y": 1
-      },
-      "exitPosition": {
-        "x": 10,
-        "y": 10
-      },
-      "tiles": [
-        [
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL",
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL",
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL",
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL",
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL",
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL",
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL",
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL",
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL"
-        ]
-      ],
-      "items": [
-        {
-          "type": "KEY",
-          "position": {
-            "x": 5,
-            "y": 2
-          }
-        },
-        {
-          "type": "KEY",
-          "position": {
-            "x": 2,
-            "y": 9
-          }
-        },
-        {
-          "type": "UNDO",
-          "position": {
-            "x": 9,
-            "y": 3
-          }
-        }
-      ],
-      "enemies": [],
-      "traps": [
-        {
-          "type": "CRACKED_FLOOR",
-          "position": {
-            "x": 2,
-            "y": 2
-          },
-          "state": {
-            "crackLevel": 0
-          }
-        },
-        {
-          "type": "CRACKED_FLOOR",
-          "position": {
-            "x": 3,
-            "y": 2
-          },
-          "state": {
-            "crackLevel": 0
-          }
-        },
-        {
-          "type": "CRACKED_FLOOR",
-          "position": {
-            "x": 4,
-            "y": 2
-          },
-          "state": {
-            "crackLevel": 0
-          }
-        },
-        {
-          "type": "CRACKED_FLOOR",
-          "position": {
-            "x": 2,
-            "y": 3
-          },
-          "state": {
-            "crackLevel": 0
-          }
-        },
-        {
-          "type": "CRACKED_FLOOR",
-          "position": {
-            "x": 4,
-            "y": 3
-          },
-          "state": {
-            "crackLevel": 0
-          }
-        },
-        {
-          "type": "CRACKED_FLOOR",
-          "position": {
-            "x": 3,
-            "y": 9
-          },
-          "state": {
-            "crackLevel": 0
-          }
-        },
-        {
-          "type": "CRACKED_FLOOR",
-          "position": {
-            "x": 4,
-            "y": 9
-          },
-          "state": {
-            "crackLevel": 0
-          }
-        },
-        {
-          "type": "SPIKE_TRAP",
-          "position": {
-            "x": 9,
-            "y": 9
-          },
-          "state": {
-            "active": false
-          }
-        }
-      ],
-      "shiftPattern": {
-        "type": "ROOM_ROTATE",
-        "sequence": [
-          {
-            "chunkId": 0
-          },
-          {
-            "chunkId": 1
-          },
-          {
-            "chunkId": 2
-          },
-          {
-            "chunkId": 3
-          }
-        ]
-      },
-      "tutorial": "Cracked floors break after two steps! Plan your route carefully to avoid getting trapped.",
-      "solution": [
-        "DOWN",
-        "RIGHT",
-        "DOWN",
-        "UP",
-        "DOWN",
-        "UP",
-        "RIGHT",
-        "RIGHT",
-        "RIGHT",
-        "LEFT",
-        "DOWN",
-        "UP",
-        "DOWN",
-        "UP",
-        "UP",
-        "DOWN",
-        "DOWN",
-        "DOWN"
-      ]
+      "tutorial": "Guards attack from a distance! Stay out of their range while navigating.",
+      "hint": "Guards attack adjacent tiles. Keep your distance and plan your path to avoid their attack range."
     },
     {
       "id": 6,
-      "name": "Living Dungeon",
-      "gridWidth": 12,
-      "gridHeight": 12,
-      "collapseMeter": 45,
+      "name": "Cracked Floors",
+      "gridWidth": 10,
+      "gridHeight": 10,
+      "collapseMeter": 32,
       "keysRequired": 2,
       "playerStart": {
         "x": 1,
         "y": 1
       },
       "exitPosition": {
-        "x": 10,
-        "y": 10
+        "x": 8,
+        "y": 8
       },
       "tiles": [
-        [
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL",
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL",
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL",
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL",
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL",
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL",
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL",
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL",
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL"
-        ]
+        ["WALL", "WALL", "WALL", "WALL", "WALL", "WALL", "WALL", "WALL", "WALL", "WALL"],
+        ["WALL", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "WALL"],
+        ["WALL", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "WALL"],
+        ["WALL", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "WALL"],
+        ["WALL", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "WALL"],
+        ["WALL", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "WALL"],
+        ["WALL", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "WALL"],
+        ["WALL", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "WALL"],
+        ["WALL", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "WALL"],
+        ["WALL", "WALL", "WALL", "WALL", "WALL", "WALL", "WALL", "WALL", "WALL", "WALL"]
       ],
       "items": [
         {
           "type": "KEY",
-          "position": {
-            "x": 5,
-            "y": 1
-          }
+          "position": { "x": 3, "y": 2 }
         },
         {
           "type": "KEY",
-          "position": {
-            "x": 1,
-            "y": 10
-          }
-        },
-        {
-          "type": "SHIELD",
-          "position": {
-            "x": 9,
-            "y": 2
-          }
+          "position": { "x": 7, "y": 7 }
         }
       ],
       "enemies": [
         {
           "type": "PATROLLER",
-          "position": {
-            "x": 3,
-            "y": 3
-          },
+          "position": { "x": 5, "y": 5 },
           "patrolPath": [
-            {
-              "x": 3,
-              "y": 3
-            },
-            {
-              "x": 3,
-              "y": 5
-            }
-          ],
-          "facing": "DOWN"
-        },
-        {
-          "type": "PATROLLER",
-          "position": {
-            "x": 9,
-            "y": 9
-          },
-          "patrolPath": [
-            {
-              "x": 9,
-              "y": 9
-            },
-            {
-              "x": 9,
-              "y": 8
-            }
-          ],
-          "facing": "UP"
+            { "x": 5, "y": 5 },
+            { "x": 6, "y": 5 }
+          ]
         }
       ],
       "traps": [
         {
-          "type": "SPIKE_TRAP",
-          "position": {
-            "x": 2,
-            "y": 4
-          },
-          "state": {
-            "active": false
-          }
-        },
-        {
-          "type": "SPIKE_TRAP",
-          "position": {
-            "x": 4,
-            "y": 2
-          },
-          "state": {
-            "active": false
-          }
+          "type": "CRACKED_FLOOR",
+          "position": { "x": 2, "y": 4 }
         },
         {
           "type": "CRACKED_FLOOR",
-          "position": {
-            "x": 2,
-            "y": 9
-          },
-          "state": {
-            "crackLevel": 0
-          }
+          "position": { "x": 4, "y": 4 }
+        },
+        {
+          "type": "CRACKED_FLOOR",
+          "position": { "x": 6, "y": 3 }
+        },
+        {
+          "type": "CRACKED_FLOOR",
+          "position": { "x": 5, "y": 7 }
         }
       ],
       "shiftPattern": {
         "type": "ROOM_SWAP",
         "sequence": [
-          {
-            "chunkA": 0,
-            "chunkB": 3
-          },
-          {
-            "chunkA": 1,
-            "chunkB": 2
-          }
+          { "chunkA": 0, "chunkB": 3 },
+          { "chunkA": 1, "chunkB": 2 }
         ]
       },
-      "tutorial": "Enemies patrol the dungeon! Watch their patterns and time your moves to avoid them.",
-      "solution": [
-        "DOWN",
-        "RIGHT",
-        "DOWN",
-        "DOWN",
-        "LEFT",
-        "UP",
-        "RIGHT",
-        "UP",
-        "UP",
-        "DOWN",
-        "DOWN",
-        "DOWN",
-        "LEFT",
-        "UP",
-        "RIGHT",
-        "DOWN",
-        "RIGHT",
-        "RIGHT"
-      ]
+      "tutorial": "Cracked floors break after stepping on them! Plan your path carefully.",
+      "hint": "Cracked floors can only be stepped on once. Plan your route to collect both keys without trapping yourself."
     },
     {
       "id": 7,
-      "name": "The Chase",
+      "name": "The Hunter",
       "gridWidth": 12,
       "gridHeight": 12,
       "collapseMeter": 40,
@@ -1499,330 +543,74 @@
         "y": 10
       },
       "tiles": [
-        [
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL",
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "FLOOR",
-          "WALL",
-          "FLOOR",
-          "WALL",
-          "FLOOR",
-          "WALL",
-          "WALL",
-          "FLOOR",
-          "WALL",
-          "FLOOR",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL",
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "FLOOR",
-          "WALL",
-          "FLOOR",
-          "WALL",
-          "FLOOR",
-          "WALL",
-          "WALL",
-          "FLOOR",
-          "WALL",
-          "FLOOR",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL",
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL",
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "FLOOR",
-          "WALL",
-          "FLOOR",
-          "WALL",
-          "FLOOR",
-          "WALL",
-          "WALL",
-          "FLOOR",
-          "WALL",
-          "FLOOR",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL",
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL"
-        ]
+        ["WALL", "WALL", "WALL", "WALL", "WALL", "WALL", "WALL", "WALL", "WALL", "WALL", "WALL", "WALL"],
+        ["WALL", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "WALL"],
+        ["WALL", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "WALL"],
+        ["WALL", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "WALL"],
+        ["WALL", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "WALL"],
+        ["WALL", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "WALL"],
+        ["WALL", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "WALL"],
+        ["WALL", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "WALL"],
+        ["WALL", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "WALL"],
+        ["WALL", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "WALL"],
+        ["WALL", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "WALL"],
+        ["WALL", "WALL", "WALL", "WALL", "WALL", "WALL", "WALL", "WALL", "WALL", "WALL", "WALL", "WALL"]
       ],
       "items": [
         {
           "type": "KEY",
-          "position": {
-            "x": 5,
-            "y": 2
-          }
+          "position": { "x": 3, "y": 3 }
         },
         {
           "type": "KEY",
-          "position": {
-            "x": 8,
-            "y": 9
-          }
-        },
-        {
-          "type": "SHIELD",
-          "position": {
-            "x": 10,
-            "y": 3
-          }
-        },
-        {
-          "type": "PHASE_STEP",
-          "position": {
-            "x": 3,
-            "y": 10
-          }
+          "position": { "x": 8, "y": 8 }
         }
       ],
       "enemies": [
         {
           "type": "CHASER",
-          "position": {
-            "x": 3,
-            "y": 3
-          },
-          "moveTimer": 2
-        },
-        {
-          "type": "CHASER",
-          "position": {
-            "x": 9,
-            "y": 8
-          },
-          "moveTimer": 1
+          "position": { "x": 6, "y": 6 }
         },
         {
           "type": "PATROLLER",
-          "position": {
-            "x": 5,
-            "y": 5
-          },
+          "position": { "x": 4, "y": 5 },
           "patrolPath": [
-            {
-              "x": 5,
-              "y": 5
-            },
-            {
-              "x": 5,
-              "y": 1
-            }
-          ],
-          "facing": "UP"
+            { "x": 4, "y": 5 },
+            { "x": 5, "y": 5 },
+            { "x": 5, "y": 6 }
+          ]
         }
       ],
       "traps": [
         {
           "type": "SPIKE_TRAP",
-          "position": {
-            "x": 2,
-            "y": 5
-          },
-          "state": {
-            "active": false
-          }
+          "position": { "x": 3, "y": 6 }
         },
         {
           "type": "SPIKE_TRAP",
-          "position": {
-            "x": 9,
-            "y": 4
-          },
-          "state": {
-            "active": false
-          }
+          "position": { "x": 7, "y": 4 }
         },
         {
-          "type": "SLIME",
-          "position": {
-            "x": 4,
-            "y": 3
-          },
-          "state": {}
-        },
-        {
-          "type": "SLIME",
-          "position": {
-            "x": 8,
-            "y": 10
-          },
-          "state": {}
-        },
-        {
-          "type": "CRACKED_FLOOR",
-          "position": {
-            "x": 1,
-            "y": 4
-          },
-          "state": {
-            "crackLevel": 0
-          }
+          "type": "SPIKE_TRAP",
+          "position": { "x": 9, "y": 7 }
         }
       ],
       "shiftPattern": {
         "type": "ROOM_SWAP",
         "sequence": [
-          {
-            "chunkA": 0,
-            "chunkB": 3
-          },
-          {
-            "chunkA": 1,
-            "chunkB": 2
-          }
+          { "chunkA": 0, "chunkB": 3 },
+          { "chunkA": 1, "chunkB": 2 }
         ]
       },
-      "tutorial": "Chasers hunt you down! They move every 2 turns. Use walls and shifts to create escape routes!",
-      "solution": [
-        "DOWN",
-        "RIGHT",
-        "DOWN",
-        "UP",
-        "RIGHT",
-        "DOWN",
-        "RIGHT",
-        "RIGHT",
-        "UP",
-        "LEFT",
-        "DOWN",
-        "UP",
-        "LEFT",
-        "DOWN",
-        "LEFT",
-        "RIGHT",
-        "DOWN",
-        "RIGHT"
-      ]
+      "tutorial": "Chasers hunt you down! They follow your movements. Use shifts to evade them.",
+      "hint": "Chasers move toward you every few turns. Use the room shifts to break line of sight and create distance."
     },
     {
       "id": 8,
-      "name": "Guardian's Domain",
+      "name": "Labyrinth",
       "gridWidth": 12,
       "gridHeight": 12,
-      "collapseMeter": 48,
+      "collapseMeter": 45,
       "keysRequired": 2,
       "playerStart": {
         "x": 1,
@@ -1833,371 +621,74 @@
         "y": 10
       },
       "tiles": [
-        [
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL",
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL",
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL",
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL",
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL",
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL",
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL",
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL",
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL"
-        ]
+        ["WALL", "WALL", "WALL", "WALL", "WALL", "WALL", "WALL", "WALL", "WALL", "WALL", "WALL", "WALL"],
+        ["WALL", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "WALL"],
+        ["WALL", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "WALL"],
+        ["WALL", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "WALL"],
+        ["WALL", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "WALL"],
+        ["WALL", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "WALL"],
+        ["WALL", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "WALL", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "WALL"],
+        ["WALL", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "WALL"],
+        ["WALL", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "WALL"],
+        ["WALL", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "WALL"],
+        ["WALL", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "WALL"],
+        ["WALL", "WALL", "WALL", "WALL", "WALL", "WALL", "WALL", "WALL", "WALL", "WALL", "WALL", "WALL"]
       ],
       "items": [
         {
           "type": "KEY",
-          "position": {
-            "x": 5,
-            "y": 3
-          }
+          "position": { "x": 3, "y": 3 }
         },
         {
           "type": "KEY",
-          "position": {
-            "x": 8,
-            "y": 8
-          }
-        },
-        {
-          "type": "ANCHOR",
-          "position": {
-            "x": 2,
-            "y": 2
-          }
-        },
-        {
-          "type": "ANCHOR",
-          "position": {
-            "x": 9,
-            "y": 9
-          }
-        },
-        {
-          "type": "SHIELD",
-          "position": {
-            "x": 10,
-            "y": 2
-          }
+          "position": { "x": 9, "y": 8 }
         }
       ],
       "enemies": [
         {
           "type": "GUARD",
-          "position": {
-            "x": 3,
-            "y": 3
-          },
-          "attackTimer": 2
+          "position": { "x": 5, "y": 5 }
         },
         {
           "type": "GUARD",
-          "position": {
-            "x": 9,
-            "y": 9
-          },
-          "attackTimer": 1
+          "position": { "x": 7, "y": 7 }
         },
         {
           "type": "PATROLLER",
-          "position": {
-            "x": 2,
-            "y": 5
-          },
+          "position": { "x": 3, "y": 6 },
           "patrolPath": [
-            {
-              "x": 2,
-              "y": 5
-            },
-            {
-              "x": 5,
-              "y": 5
-            }
-          ],
-          "facing": "RIGHT"
+            { "x": 3, "y": 6 },
+            { "x": 4, "y": 6 },
+            { "x": 4, "y": 7 }
+          ]
         },
         {
-          "type": "CHASER",
-          "position": {
-            "x": 10,
-            "y": 8
-          },
-          "moveTimer": 2
+          "type": "PATROLLER",
+          "position": { "x": 8, "y": 4 },
+          "patrolPath": [
+            { "x": 8, "y": 4 },
+            { "x": 9, "y": 4 },
+            { "x": 9, "y": 5 }
+          ]
         }
       ],
-      "traps": [
-        {
-          "type": "SPIKE_TRAP",
-          "position": {
-            "x": 4,
-            "y": 4
-          },
-          "state": {
-            "active": false
-          }
-        },
-        {
-          "type": "SPIKE_TRAP",
-          "position": {
-            "x": 8,
-            "y": 10
-          },
-          "state": {
-            "active": false
-          }
-        },
-        {
-          "type": "SLIME",
-          "position": {
-            "x": 1,
-            "y": 3
-          },
-          "state": {}
-        },
-        {
-          "type": "SLIME",
-          "position": {
-            "x": 10,
-            "y": 9
-          },
-          "state": {}
-        },
-        {
-          "type": "ARROW_TRAP",
-          "position": {
-            "x": 2,
-            "y": 4
-          },
-          "state": {
-            "timer": 3,
-            "interval": 3,
-            "direction": "RIGHT"
-          }
-        },
-        {
-          "type": "CRACKED_FLOOR",
-          "position": {
-            "x": 4,
-            "y": 2
-          },
-          "state": {
-            "crackLevel": 0
-          }
-        }
-      ],
-      "switches": [
-        {
-          "position": {
-            "x": 1,
-            "y": 2
-          },
-          "state": "OFF",
-          "linkedPattern": 0
-        },
-        {
-          "position": {
-            "x": 10,
-            "y": 4
-          },
-          "state": "OFF",
-          "linkedPattern": 1
-        }
-      ],
+      "traps": [],
       "shiftPattern": {
-        "type": "ROOM_ROTATE",
+        "type": "ROOM_SWAP",
         "sequence": [
-          {
-            "chunkId": 0
-          },
-          {
-            "chunkId": 1
-          },
-          {
-            "chunkId": 2
-          },
-          {
-            "chunkId": 3
-          }
+          { "chunkA": 0, "chunkB": 3 },
+          { "chunkA": 1, "chunkB": 2 }
         ]
       },
-      "tutorial": "Guards attack adjacent tiles on even turns! Use anchors to control shifts and switches to change patterns.",
-      "solution": [
-        "DOWN",
-        "RIGHT",
-        "DOWN",
-        "UP",
-        "DOWN",
-        "RIGHT",
-        "RIGHT",
-        "RIGHT",
-        "DOWN",
-        "LEFT"
-      ]
+      "tutorial": "Multiple enemy types! Combine all your skills to navigate through.",
+      "hint": "This level combines guards and patrollers. Plan carefully and use the open space for protection."
     },
     {
       "id": 9,
-      "name": "Gauntlet",
+      "name": "Gauntlet Run",
       "gridWidth": 12,
       "gridHeight": 12,
-      "collapseMeter": 38,
+      "collapseMeter": 50,
       "keysRequired": 3,
       "playerStart": {
         "x": 1,
@@ -2208,1288 +699,232 @@
         "y": 10
       },
       "tiles": [
-        [
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL",
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL",
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL",
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL",
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL",
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL",
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL",
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL",
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL"
-        ]
+        ["WALL", "WALL", "WALL", "WALL", "WALL", "WALL", "WALL", "WALL", "WALL", "WALL", "WALL", "WALL"],
+        ["WALL", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "WALL"],
+        ["WALL", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "WALL"],
+        ["WALL", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "WALL"],
+        ["WALL", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "WALL"],
+        ["WALL", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "WALL"],
+        ["WALL", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "WALL"],
+        ["WALL", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "WALL"],
+        ["WALL", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "WALL"],
+        ["WALL", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "WALL"],
+        ["WALL", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "WALL"],
+        ["WALL", "WALL", "WALL", "WALL", "WALL", "WALL", "WALL", "WALL", "WALL", "WALL", "WALL", "WALL"]
       ],
       "items": [
         {
           "type": "KEY",
-          "position": {
-            "x": 5,
-            "y": 1
-          }
+          "position": { "x": 3, "y": 2 }
         },
         {
           "type": "KEY",
-          "position": {
-            "x": 1,
-            "y": 5
-          }
+          "position": { "x": 6, "y": 6 }
         },
         {
           "type": "KEY",
-          "position": {
-            "x": 10,
-            "y": 8
-          }
-        },
-        {
-          "type": "SHIELD",
-          "position": {
-            "x": 3,
-            "y": 2
-          }
-        },
-        {
-          "type": "SHIELD",
-          "position": {
-            "x": 8,
-            "y": 9
-          }
-        },
-        {
-          "type": "ANCHOR",
-          "position": {
-            "x": 2,
-            "y": 10
-          }
-        },
-        {
-          "type": "PHASE_STEP",
-          "position": {
-            "x": 9,
-            "y": 3
-          }
-        },
-        {
-          "type": "UNDO",
-          "position": {
-            "x": 5,
-            "y": 5
-          }
+          "position": { "x": 9, "y": 9 }
         }
       ],
       "enemies": [
         {
-          "type": "GUARD",
-          "position": {
-            "x": 3,
-            "y": 3
-          },
-          "attackTimer": 2
-        },
-        {
-          "type": "GUARD",
-          "position": {
-            "x": 9,
-            "y": 9
-          },
-          "attackTimer": 1
-        },
-        {
           "type": "CHASER",
-          "position": {
-            "x": 4,
-            "y": 4
-          },
-          "moveTimer": 2
-        },
-        {
-          "type": "CHASER",
-          "position": {
-            "x": 8,
-            "y": 8
-          },
-          "moveTimer": 1
+          "position": { "x": 5, "y": 5 }
         },
         {
           "type": "PATROLLER",
-          "position": {
-            "x": 2,
-            "y": 3
-          },
+          "position": { "x": 3, "y": 4 },
           "patrolPath": [
-            {
-              "x": 2,
-              "y": 3
-            },
-            {
-              "x": 5,
-              "y": 3
-            }
-          ],
-          "facing": "RIGHT"
+            { "x": 3, "y": 4 },
+            { "x": 4, "y": 4 }
+          ]
         },
         {
           "type": "PATROLLER",
-          "position": {
-            "x": 9,
-            "y": 10
-          },
+          "position": { "x": 7, "y": 7 },
           "patrolPath": [
-            {
-              "x": 9,
-              "y": 10
-            },
-            {
-              "x": 9,
-              "y": 8
-            }
-          ],
-          "facing": "UP"
+            { "x": 7, "y": 7 },
+            { "x": 8, "y": 7 }
+          ]
+        },
+        {
+          "type": "GUARD",
+          "position": { "x": 5, "y": 8 }
         }
       ],
       "traps": [
         {
           "type": "SPIKE_TRAP",
-          "position": {
-            "x": 2,
-            "y": 2
-          },
-          "state": {
-            "active": false
-          }
+          "position": { "x": 2, "y": 5 }
         },
         {
           "type": "SPIKE_TRAP",
-          "position": {
-            "x": 4,
-            "y": 5
-          },
-          "state": {
-            "active": false
-          }
+          "position": { "x": 6, "y": 3 }
         },
         {
           "type": "SPIKE_TRAP",
-          "position": {
-            "x": 10,
-            "y": 9
-          },
-          "state": {
-            "active": false
-          }
-        },
-        {
-          "type": "ARROW_TRAP",
-          "position": {
-            "x": 1,
-            "y": 4
-          },
-          "state": {
-            "timer": 3,
-            "interval": 3,
-            "direction": "RIGHT"
-          }
-        },
-        {
-          "type": "ARROW_TRAP",
-          "position": {
-            "x": 10,
-            "y": 3
-          },
-          "state": {
-            "timer": 2,
-            "interval": 3,
-            "direction": "DOWN"
-          }
-        },
-        {
-          "type": "SLIME",
-          "position": {
-            "x": 2,
-            "y": 4
-          },
-          "state": {}
-        },
-        {
-          "type": "SLIME",
-          "position": {
-            "x": 5,
-            "y": 2
-          },
-          "state": {}
-        },
-        {
-          "type": "SLIME",
-          "position": {
-            "x": 9,
-            "y": 8
-          },
-          "state": {}
+          "position": { "x": 8, "y": 5 }
         },
         {
           "type": "CRACKED_FLOOR",
-          "position": {
-            "x": 1,
-            "y": 2
-          },
-          "state": {
-            "crackLevel": 0
-          }
+          "position": { "x": 4, "y": 6 }
         },
         {
           "type": "CRACKED_FLOOR",
-          "position": {
-            "x": 4,
-            "y": 1
-          },
-          "state": {
-            "crackLevel": 0
-          }
-        },
-        {
-          "type": "CRACKED_FLOOR",
-          "position": {
-            "x": 5,
-            "y": 4
-          },
-          "state": {
-            "crackLevel": 0
-          }
-        },
-        {
-          "type": "CRACKED_FLOOR",
-          "position": {
-            "x": 8,
-            "y": 10
-          },
-          "state": {
-            "crackLevel": 0
-          }
+          "position": { "x": 7, "y": 4 }
         }
       ],
       "shiftPattern": {
-        "type": "ROW_COLUMN_SLIDE",
+        "type": "ROOM_SWAP",
         "sequence": [
-          {
-            "axis": "row",
-            "index": 2,
-            "direction": "RIGHT"
-          },
-          {
-            "axis": "column",
-            "index": 2,
-            "direction": "DOWN"
-          },
-          {
-            "axis": "row",
-            "index": 9,
-            "direction": "LEFT"
-          },
-          {
-            "axis": "column",
-            "index": 9,
-            "direction": "UP"
-          }
+          { "chunkA": 0, "chunkB": 3 },
+          { "chunkA": 1, "chunkB": 2 }
         ]
       },
-      "tutorial": "The ultimate test! All hazards, all enemies, tight time limit. Use every tool at your disposal!",
-      "solution": [
-        "DOWN",
-        "RIGHT",
-        "DOWN",
-        "UP",
-        "RIGHT",
-        "RIGHT",
-        "UP",
-        "RIGHT",
-        "DOWN",
-        "LEFT",
-        "DOWN",
-        "DOWN",
-        "LEFT",
-        "LEFT",
-        "DOWN",
-        "LEFT",
-        "UP",
-        "RIGHT",
-        "UP",
-        "UP",
-        "DOWN",
-        "UP",
-        "DOWN",
-        "DOWN",
-        "RIGHT",
-        "RIGHT"
-      ]
+      "tutorial": "High difficulty! Navigate the open space with all trap types and multiple enemies.",
+      "hint": "This is a challenging level. Take your time, use undo liberally, and plan each move carefully."
     },
     {
       "id": 10,
       "name": "The Final Shift",
-      "gridWidth": 16,
-      "gridHeight": 16,
-      "collapseMeter": 55,
+      "gridWidth": 14,
+      "gridHeight": 14,
+      "collapseMeter": 60,
       "keysRequired": 3,
       "playerStart": {
         "x": 1,
         "y": 1
       },
       "exitPosition": {
-        "x": 14,
-        "y": 14
+        "x": 12,
+        "y": 12
       },
       "tiles": [
-        [
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL",
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL",
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL",
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL",
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL",
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL",
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL",
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL",
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL",
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL",
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL",
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL",
-          "WALL",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "FLOOR",
-          "WALL"
-        ],
-        [
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL",
-          "WALL"
-        ]
+        ["WALL", "WALL", "WALL", "WALL", "WALL", "WALL", "WALL", "WALL", "WALL", "WALL", "WALL", "WALL", "WALL", "WALL"],
+        ["WALL", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "WALL"],
+        ["WALL", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "WALL"],
+        ["WALL", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "WALL"],
+        ["WALL", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "WALL"],
+        ["WALL", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "WALL"],
+        ["WALL", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "WALL"],
+        ["WALL", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "WALL", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "WALL"],
+        ["WALL", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "WALL"],
+        ["WALL", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "WALL"],
+        ["WALL", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "WALL"],
+        ["WALL", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "WALL"],
+        ["WALL", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "FLOOR", "WALL"],
+        ["WALL", "WALL", "WALL", "WALL", "WALL", "WALL", "WALL", "WALL", "WALL", "WALL", "WALL", "WALL", "WALL", "WALL"]
       ],
       "items": [
         {
           "type": "KEY",
-          "position": {
-            "x": 6,
-            "y": 2
-          }
+          "position": { "x": 3, "y": 3 }
         },
         {
           "type": "KEY",
-          "position": {
-            "x": 2,
-            "y": 13
-          }
+          "position": { "x": 10, "y": 6 }
         },
         {
           "type": "KEY",
-          "position": {
-            "x": 13,
-            "y": 6
-          }
-        },
-        {
-          "type": "SHIELD",
-          "position": {
-            "x": 3,
-            "y": 3
-          }
-        },
-        {
-          "type": "SHIELD",
-          "position": {
-            "x": 12,
-            "y": 12
-          }
-        },
-        {
-          "type": "SHIELD",
-          "position": {
-            "x": 6,
-            "y": 10
-          }
-        },
-        {
-          "type": "ANCHOR",
-          "position": {
-            "x": 4,
-            "y": 5
-          }
-        },
-        {
-          "type": "ANCHOR",
-          "position": {
-            "x": 11,
-            "y": 10
-          }
-        },
-        {
-          "type": "PHASE_STEP",
-          "position": {
-            "x": 5,
-            "y": 4
-          }
-        },
-        {
-          "type": "PHASE_STEP",
-          "position": {
-            "x": 10,
-            "y": 11
-          }
-        },
-        {
-          "type": "UNDO",
-          "position": {
-            "x": 7,
-            "y": 7
-          }
+          "position": { "x": 6, "y": 10 }
         }
       ],
       "enemies": [
         {
-          "type": "GUARD",
-          "position": {
-            "x": 4,
-            "y": 4
-          },
-          "attackTimer": 2
-        },
-        {
-          "type": "GUARD",
-          "position": {
-            "x": 11,
-            "y": 11
-          },
-          "attackTimer": 1
-        },
-        {
-          "type": "GUARD",
-          "position": {
-            "x": 6,
-            "y": 13
-          },
-          "attackTimer": 2
+          "type": "CHASER",
+          "position": { "x": 5, "y": 5 }
         },
         {
           "type": "CHASER",
-          "position": {
-            "x": 5,
-            "y": 5
-          },
-          "moveTimer": 2
+          "position": { "x": 9, "y": 9 }
         },
         {
-          "type": "CHASER",
-          "position": {
-            "x": 10,
-            "y": 10
-          },
-          "moveTimer": 1
+          "type": "GUARD",
+          "position": { "x": 4, "y": 7 }
         },
         {
-          "type": "CHASER",
-          "position": {
-            "x": 13,
-            "y": 3
-          },
-          "moveTimer": 2
+          "type": "GUARD",
+          "position": { "x": 10, "y": 8 }
         },
         {
           "type": "PATROLLER",
-          "position": {
-            "x": 2,
-            "y": 4
-          },
+          "position": { "x": 3, "y": 5 },
           "patrolPath": [
-            {
-              "x": 2,
-              "y": 4
-            },
-            {
-              "x": 6,
-              "y": 4
-            }
-          ],
-          "facing": "RIGHT"
+            { "x": 3, "y": 5 },
+            { "x": 4, "y": 5 },
+            { "x": 4, "y": 6 }
+          ]
         },
         {
           "type": "PATROLLER",
-          "position": {
-            "x": 13,
-            "y": 11
-          },
+          "position": { "x": 8, "y": 10 },
           "patrolPath": [
-            {
-              "x": 13,
-              "y": 11
-            },
-            {
-              "x": 9,
-              "y": 11
-            }
-          ],
-          "facing": "LEFT"
+            { "x": 8, "y": 10 },
+            { "x": 9, "y": 10 },
+            { "x": 9, "y": 11 }
+          ]
         },
         {
           "type": "PATROLLER",
-          "position": {
-            "x": 3,
-            "y": 10
-          },
+          "position": { "x": 11, "y": 4 },
           "patrolPath": [
-            {
-              "x": 3,
-              "y": 10
-            },
-            {
-              "x": 3,
-              "y": 13
-            }
-          ],
-          "facing": "DOWN"
+            { "x": 11, "y": 4 },
+            { "x": 11, "y": 5 },
+            { "x": 10, "y": 5 }
+          ]
         }
       ],
       "traps": [
         {
           "type": "SPIKE_TRAP",
-          "position": {
-            "x": 2,
-            "y": 2
-          },
-          "state": {
-            "active": false
-          }
+          "position": { "x": 2, "y": 6 }
         },
         {
           "type": "SPIKE_TRAP",
-          "position": {
-            "x": 5,
-            "y": 3
-          },
-          "state": {
-            "active": false
-          }
+          "position": { "x": 6, "y": 4 }
         },
         {
           "type": "SPIKE_TRAP",
-          "position": {
-            "x": 10,
-            "y": 5
-          },
-          "state": {
-            "active": false
-          }
+          "position": { "x": 8, "y": 3 }
         },
         {
           "type": "SPIKE_TRAP",
-          "position": {
-            "x": 13,
-            "y": 13
-          },
-          "state": {
-            "active": false
-          }
+          "position": { "x": 5, "y": 11 }
         },
         {
           "type": "SPIKE_TRAP",
-          "position": {
-            "x": 4,
-            "y": 12
-          },
-          "state": {
-            "active": false
-          }
-        },
-        {
-          "type": "ARROW_TRAP",
-          "position": {
-            "x": 1,
-            "y": 3
-          },
-          "state": {
-            "timer": 3,
-            "interval": 3,
-            "direction": "RIGHT"
-          }
-        },
-        {
-          "type": "ARROW_TRAP",
-          "position": {
-            "x": 14,
-            "y": 4
-          },
-          "state": {
-            "timer": 2,
-            "interval": 3,
-            "direction": "LEFT"
-          }
-        },
-        {
-          "type": "ARROW_TRAP",
-          "position": {
-            "x": 3,
-            "y": 12
-          },
-          "state": {
-            "timer": 1,
-            "interval": 3,
-            "direction": "UP"
-          }
-        },
-        {
-          "type": "ARROW_TRAP",
-          "position": {
-            "x": 12,
-            "y": 2
-          },
-          "state": {
-            "timer": 2,
-            "interval": 3,
-            "direction": "DOWN"
-          }
-        },
-        {
-          "type": "SLIME",
-          "position": {
-            "x": 2,
-            "y": 5
-          },
-          "state": {}
-        },
-        {
-          "type": "SLIME",
-          "position": {
-            "x": 6,
-            "y": 3
-          },
-          "state": {}
-        },
-        {
-          "type": "SLIME",
-          "position": {
-            "x": 9,
-            "y": 12
-          },
-          "state": {}
-        },
-        {
-          "type": "SLIME",
-          "position": {
-            "x": 13,
-            "y": 10
-          },
-          "state": {}
+          "position": { "x": 11, "y": 9 }
         },
         {
           "type": "CRACKED_FLOOR",
-          "position": {
-            "x": 1,
-            "y": 2
-          },
-          "state": {
-            "crackLevel": 0
-          }
+          "position": { "x": 3, "y": 8 }
         },
         {
           "type": "CRACKED_FLOOR",
-          "position": {
-            "x": 3,
-            "y": 6
-          },
-          "state": {
-            "crackLevel": 0
-          }
+          "position": { "x": 7, "y": 6 }
         },
         {
           "type": "CRACKED_FLOOR",
-          "position": {
-            "x": 5,
-            "y": 2
-          },
-          "state": {
-            "crackLevel": 0
-          }
+          "position": { "x": 9, "y": 5 }
         },
         {
           "type": "CRACKED_FLOOR",
-          "position": {
-            "x": 6,
-            "y": 5
-          },
-          "state": {
-            "crackLevel": 0
-          }
+          "position": { "x": 10, "y": 11 }
         },
         {
           "type": "CRACKED_FLOOR",
-          "position": {
-            "x": 10,
-            "y": 9
-          },
-          "state": {
-            "crackLevel": 0
-          }
-        },
-        {
-          "type": "CRACKED_FLOOR",
-          "position": {
-            "x": 12,
-            "y": 13
-          },
-          "state": {
-            "crackLevel": 0
-          }
-        },
-        {
-          "type": "CRACKED_FLOOR",
-          "position": {
-            "x": 14,
-            "y": 11
-          },
-          "state": {
-            "crackLevel": 0
-          }
-        }
-      ],
-      "switches": [
-        {
-          "position": {
-            "x": 1,
-            "y": 5
-          },
-          "state": "OFF",
-          "linkedPattern": 0
-        },
-        {
-          "position": {
-            "x": 14,
-            "y": 10
-          },
-          "state": "OFF",
-          "linkedPattern": 1
-        },
-        {
-          "position": {
-            "x": 5,
-            "y": 14
-          },
-          "state": "OFF",
-          "linkedPattern": 2
+          "position": { "x": 4, "y": 10 }
         }
       ],
       "shiftPattern": {
         "type": "ROOM_SWAP",
         "sequence": [
-          {
-            "chunkA": 0,
-            "chunkB": 3
-          },
-          {
-            "chunkA": 1,
-            "chunkB": 2
-          },
-          {
-            "chunkA": 0,
-            "chunkB": 1
-          },
-          {
-            "chunkA": 2,
-            "chunkB": 3
-          }
+          { "chunkA": 0, "chunkB": 3 },
+          { "chunkA": 1, "chunkB": 2 }
         ]
       },
-      "alternatePatterns": [
-        {
-          "type": "ROOM_ROTATE",
-          "sequence": [
-            {
-              "chunkId": 0
-            },
-            {
-              "chunkId": 1
-            },
-            {
-              "chunkId": 2
-            },
-            {
-              "chunkId": 3
-            }
-          ]
-        },
-        {
-          "type": "ROW_COLUMN_SLIDE",
-          "sequence": [
-            {
-              "axis": "row",
-              "index": 2,
-              "direction": "RIGHT"
-            },
-            {
-              "axis": "column",
-              "index": 2,
-              "direction": "DOWN"
-            },
-            {
-              "axis": "row",
-              "index": 13,
-              "direction": "LEFT"
-            },
-            {
-              "axis": "column",
-              "index": 13,
-              "direction": "UP"
-            }
-          ]
-        }
-      ],
-      "tutorial": "This is it - the final challenge! Master all mechanics, defeat all enemies, and escape before the dungeon collapses. Good luck!",
-      "solution": [
-        "DOWN",
-        "UP",
-        "DOWN",
-        "RIGHT",
-        "RIGHT",
-        "RIGHT",
-        "RIGHT",
-        "RIGHT",
-        "UP",
-        "DOWN",
-        "DOWN",
-        "DOWN",
-        "DOWN",
-        "DOWN",
-        "LEFT",
-        "UP",
-        "UP",
-        "DOWN",
-        "LEFT",
-        "LEFT",
-        "LEFT",
-        "DOWN",
-        "RIGHT",
-        "RIGHT",
-        "RIGHT",
-        "RIGHT"
-      ]
+      "tutorial": "The ultimate challenge! All enemy types, all traps, complex shifting. Good luck!",
+      "hint": "This is the final test. Use everything you've learned. Plan carefully, use undo when needed, and don't give up!"
     }
   ]
 }
