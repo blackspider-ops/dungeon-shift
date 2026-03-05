@@ -84,83 +84,89 @@
         {
           "step": 5,
           "trigger": "manual",
-          "message": "After each move, the dungeon SHIFTS! Rooms swap positions. The maze rearranges itself!",
-          "highlight": "player"
+          "message": "After each move, the dungeon SHIFTS! The map is divided into 4 QUADRANTS that swap positions.",
+          "highlight": "grid"
         },
         {
           "step": 6,
           "trigger": "manual",
-          "message": "Watch the 'Next Shift' indicator on the right! It shows which rooms will swap next.",
+          "message": "Look at the 'Next Shift' box on the right. The 4 squares represent the 4 quadrants of this map!",
           "highlight": "shift"
         },
         {
           "step": 7,
           "trigger": "manual",
+          "message": "The colored arrows show which quadrants will SWAP. Top-Left ↔ Bottom-Right, Top-Right ↔ Bottom-Left!",
+          "highlight": "shift"
+        },
+        {
+          "step": 8,
+          "trigger": "manual",
           "message": "Gray blocks are WALLS. You cannot walk through them. Plan your path carefully!",
           "highlight": "walls"
         },
         {
-          "step": 8,
+          "step": 9,
           "trigger": "manual",
           "message": "The yellow icon is a KEY. Collect keys to unlock the exit! Now explore and collect the key!",
           "highlight": "key"
         },
         {
-          "step": 9,
+          "step": 10,
           "trigger": "keyCollected",
           "message": "Excellent! You collected the key. Check the key counter at the top!",
           "highlight": "hud"
         },
         {
-          "step": 10,
+          "step": 11,
           "trigger": "manual",
           "message": "Gray spikes are SPIKE TRAPS. They damage you when you step on them. Avoid them!",
           "highlight": "trap"
         },
         {
-          "step": 11,
+          "step": 12,
           "trigger": "manual",
           "message": "Red enemies are PATROLLERS. They move along set paths. Don't touch them or you'll take damage!",
           "highlight": "enemy"
         },
         {
-          "step": 12,
+          "step": 13,
           "trigger": "manual",
           "message": "Press [U] or click the UNDO button (bottom-left) to undo moves. You have 5 undos per level!",
           "highlight": "undo"
         },
         {
-          "step": 13,
+          "step": 14,
           "trigger": "manual",
           "message": "Press [H] or click HINT button for help. You get 1 hint per level (reduces undos to 3)!",
           "highlight": "hint"
         },
         {
-          "step": 14,
+          "step": 15,
           "trigger": "manual",
           "message": "Press [P] for SOLUTION (bottom-right). Solutions unlock after completing a level once!",
           "highlight": "solution"
         },
         {
-          "step": 15,
+          "step": 16,
           "trigger": "manual",
           "message": "Press [ESC] to open the PAUSE MENU (top-right). You can restart or quit from there!",
           "highlight": "pause"
         },
         {
-          "step": 16,
+          "step": 17,
           "trigger": "manual",
           "message": "Press [M] to MUTE/UNMUTE audio (top-right). Toggle sound effects and music anytime!",
           "highlight": "mute"
         },
         {
-          "step": 17,
+          "step": 18,
           "trigger": "manual",
           "message": "The purple portal is the EXIT. Reach it with all required keys to win!",
           "highlight": "exit"
         },
         {
-          "step": 18,
+          "step": 19,
           "trigger": "manual",
           "message": "That's everything! Now complete this tutorial level. Good luck!",
           "highlight": "none"
